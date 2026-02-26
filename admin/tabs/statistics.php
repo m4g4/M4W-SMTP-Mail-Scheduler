@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Statistics' ) ) {
+if ( ! class_exists( __NAMESPACE__ . '\\Statistics', false ) ) {
 
     class Statistics {
 

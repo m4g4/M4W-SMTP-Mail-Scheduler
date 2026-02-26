@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-if (!class_exists('Profile_Page')) {
+if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
 
     class Profile_Page {
         private static $instance;

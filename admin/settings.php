@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-if (!class_exists('Settings')) {
+if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
 
     class Settings {
 

@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-if (!class_exists('Hour_Stats_Bar_Chart')) {
+if (!class_exists(__NAMESPACE__ . '\\Hour_Stats_Bar_Chart', false)) {
 
     class Hour_Stats_Bar_Chart {
 

@@ -3,7 +3,7 @@ namespace Ssmptms;
 
 if (!defined('ABSPATH')) exit;
 
-if (!class_exists('Donut_Chart')) {
+if (!class_exists(__NAMESPACE__ . '\\Donut_Chart', false)) {
 
     class Donut_Chart {
 

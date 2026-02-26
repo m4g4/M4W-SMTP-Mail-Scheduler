@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-if (!class_exists('Log_Settings')) {
+if (!class_exists(__NAMESPACE__ . '\\Log_Settings', false)) {
 
     class Log_Settings {
 

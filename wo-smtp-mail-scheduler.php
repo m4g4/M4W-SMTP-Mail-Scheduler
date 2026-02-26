@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WO SMTP Mail Scheduler
  * Description: Intercepts WordPress emails, queues them, and sends via SMTP with retry logic and logging.
- * Version:     1.7.0
+ * Version:     1.7.1
  * Author:      m4g4
  * License:     GPLv3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define('SSMPTMS_PLUGIN',    plugin_basename(__FILE__));
 
 // TESTING MODE
-define('SSMPTMS_TESTING_MODE', 1);
+define('SSMPTMS_TESTING_MODE', 0);
 
 require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
 require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
@@ -31,7 +31,6 @@ require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
 require_once __DIR__ . '/globals.php';
 require_once __DIR__ . '/db/index.php';
 require_once __DIR__ . '/install.php';
-require_once __DIR__ . '/migrate.php';
 require_once __DIR__ . '/includes/index.php';
 require_once __DIR__ . '/admin/index.php';
 
@@ -48,7 +47,7 @@ function ssmptms_deactivation() {
 }
 
 add_filter('cron_schedules', 'ssmptms_add_cron_interval');
-function ssmptms_add_cron_interval() {
+function ssmptms_add_cron_interval($schedules) {
     $schedules['minute'] = array(
     	'interval' => 60,
     	'display'  => __('Every Minute', Ssmptms\Constants::DOMAIN),

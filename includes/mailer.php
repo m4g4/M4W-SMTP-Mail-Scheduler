@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-if (!class_exists('Mailer')) {
+if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
 
     class Mailer {
         private static $instance;

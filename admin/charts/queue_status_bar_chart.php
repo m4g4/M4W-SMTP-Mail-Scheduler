@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-if (!class_exists('Queue_Status_Bar_Chart')) {
+if (!class_exists(__NAMESPACE__ . '\\Queue_Status_Bar_Chart', false)) {
 
     class Queue_Status_Bar_Chart {
 

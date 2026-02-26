@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Test_Settings' ) ) {
+if ( ! class_exists( __NAMESPACE__ . '\\Test_Settings', false ) ) {
 
 	class Test_Settings {
 

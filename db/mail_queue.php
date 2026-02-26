@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if (!class_exists('Email_Queue')) {
+if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
 
     /**
      * Handles database operations for the SMTP Mail Scheduler email queue.

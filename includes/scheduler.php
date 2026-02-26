@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Email_Scheduler' ) ) {
+if ( ! class_exists( __NAMESPACE__ . '\\Email_Scheduler', false ) ) {
 
     class Email_Scheduler {
         private int $emailsPerUnit;

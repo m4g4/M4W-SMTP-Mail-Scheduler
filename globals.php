@@ -8,7 +8,8 @@ if (!defined('ABSPATH')) {
 
 final class Constants {
 
-    public const PLUGIN_VERSION     = '1.7.0';
+    // Do not forget to change the header in wo-smtp-mail-scheduler as well when changing the plugin version.
+    public const PLUGIN_VERSION     = '1.7.1';
     public const VERSION     = '1.2';
 
     /** Queue table */
@@ -19,34 +20,20 @@ final class Constants {
     public const DOMAIN      = 'wo-smtp-mail-scheduler';
     public const CIPHER      = 'aes-256-cbc';
 
-    /** DB version for migration control */
-    public const DB_VERSION_OLD = 'simple_smtp_mail_db_version';
     public const DB_VERSION     = 'ssmptms_db_version';
 
     /** Option keys */
-    public const PROFILES_OLD        = 'simple_smtp_mail_scheduler_profiles';
     public const PROFILES            = 'ssmptms_profiles';
 
-    public const PROFILE_ACTIVE_OLD  = 'simple_smtp_mail_scheduler_profile_active';
     public const PROFILE_ACTIVE      = 'ssmptms_profile_active';
-
-    public const EMAILS_PER_UNIT_OLD = 'simple_smtp_mail_scheduler_emails_per_unit';
     public const EMAILS_PER_UNIT     = 'ssmptms_emails_per_unit';
-
-    public const EMAILS_UNIT_OLD     = 'simple_smtp_mail_scheduler_emails_unit';
     public const EMAILS_UNIT         = 'ssmptms_emails_unit';
-
-    public const DISABLE_OLD         = 'simple_smtp_mail_scheduler_disable';
     public const DISABLE             = 'ssmptms_disable';
     
     /** Stored values */
-    public const EMAILS_SCHEDULER_LAST_TICK_OLD = 'simple_smtp_mail_scheduler_last_tick';
     public const EMAILS_SCHEDULER_LAST_TICK     = 'ssmptms_last_tick';
 
-    public const EMAILS_SCHEDULER_CARRY_OLD = 'simple_smtp_mail_scheduler_carry';
     public const EMAILS_SCHEDULER_CARRY     = 'ssmptms_carry';
-
-    public const CURRENT_QUEUE_COUNT_OLD = 'simple_smtp_mail_scheduler_current_queue_count';
     public const CURRENT_QUEUE_COUNT     = 'ssmptms_current_queue_count';
 
     // Limits

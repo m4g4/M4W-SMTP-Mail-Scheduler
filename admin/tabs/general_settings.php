@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'General_Settings' ) ) {
+if ( ! class_exists( __NAMESPACE__ . '\\General_Settings', false ) ) {
 
 	class General_Settings {
 
