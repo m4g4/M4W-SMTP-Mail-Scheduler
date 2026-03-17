@@ -113,7 +113,7 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
             $result = $wpdb->insert($this->table_name, $data, $formats);
 
             if (false === $result) {
-                error_log('WO SMTP Mail Scheduler: Failed to insert queued email. DB error: ' . $wpdb->last_error);
+                error_log('M4W SMTP Mail Scheduler: Failed to insert queued email. DB error: ' . $wpdb->last_error);
             }
 
             return $result;
@@ -394,7 +394,7 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
             ");
         
             if ($updated !== false) {
-                error_log("WO SMTP Mail Scheduler: Fixed {$updated} rows with broken created_at");
+                error_log("M4W SMTP Mail Scheduler: Fixed {$updated} rows with broken created_at");
             }
         
             update_option('ssmptms_created_at_fixed_v2', 'yes');

@@ -1,17 +1,17 @@
 <?php
 /**
- * Plugin Name: WO SMTP Mail Scheduler
+ * Plugin Name: M4W SMTP Mail Scheduler
  * Description: Intercepts WordPress emails, queues them, and sends via SMTP with retry logic and logging.
- * Version:     1.7.1
+ * Version:     1.8.1
  * Author:      m4g4
  * License:     GPLv3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- * Text Domain: wo-smtp-mail-scheduler
+ * Text Domain: m4w-smtp-mail-scheduler
  * Domain Path: /languages
  * 
  * Requires at least: 5.6
  * Tested up to: 6.8
- * Requires PHP: 7.4
+ * Requires PHP: 8.2
  */
 
 

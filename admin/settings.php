@@ -57,8 +57,8 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
 
         public function register_menus() {
             add_options_page(
-                __('WO SMTP Mail Scheduler', Constants::DOMAIN),
-                __('WO SMTP Mail Scheduler', Constants::DOMAIN),
+                __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
+                __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
                 'manage_options',
                 Constants::SETTINGS_PAGE,
                 [$this, 'settings_page']

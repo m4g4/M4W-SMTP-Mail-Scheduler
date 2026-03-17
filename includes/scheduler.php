@@ -59,7 +59,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\Email_Scheduler', false ) ) {
                 try {
                     ($this->callback)($toSend);
                 } catch (\Throwable $e) {
-                    error_log('WO SMTP Mail Scheduler tick() error: ' . $e->getMessage());
+                    error_log('M4W SMTP Mail Scheduler tick() error: ' . $e->getMessage());
                 }
             }
             

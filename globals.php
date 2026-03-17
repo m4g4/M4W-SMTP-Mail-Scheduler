@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 
 final class Constants {
 
-    // Do not forget to change the header in wo-smtp-mail-scheduler as well when changing the plugin version.
+    // Do not forget to change the header in m4w-smtp-mail-scheduler as well when changing the plugin version.
     public const PLUGIN_VERSION     = '1.7.1';
     public const VERSION     = '1.2';
 
@@ -17,7 +17,7 @@ final class Constants {
     public const QUEUE_DB_NAME     = 'ssmptms_queue';
 
     // Plugin
-    public const DOMAIN      = 'wo-smtp-mail-scheduler';
+    public const DOMAIN      = 'm4w-smtp-mail-scheduler';
     public const CIPHER      = 'aes-256-cbc';
 
     public const DB_VERSION     = 'ssmptms_db_version';

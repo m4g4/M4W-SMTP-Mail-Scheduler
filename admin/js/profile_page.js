@@ -33,4 +33,18 @@ jQuery(document).ready(function($) {
 
     // Run whenever user types or changes input
     form.on('input change', '#from_email, #from_name', updateCheckboxes);
+
+    function toggleAuthRows() {
+        const authMode = form.find('#ssmptms-auth_mode').val();
+        const isNone = authMode === 'none';
+
+        const rowUser = $('#ssmptms-row-username');
+        const rowPass = $('#ssmptms-row-password');
+
+        rowUser.toggle(!isNone);
+        rowPass.toggle(!isNone);
+    }
+
+    form.on('change', '#ssmptms-auth_mode', toggleAuthRows);
+    toggleAuthRows();
 });

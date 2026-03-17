@@ -38,6 +38,7 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
                 'port'       => 465,
                 'encryption' => 'ssl',
                 'autotls'    => true,
+                'auth_mode'  => 'login',
                 'username'   => '',
                 'password'   => '',
             ];
@@ -49,7 +50,7 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
             } elseif (!$is_new) {
                 $profiles = get_option(Constants::PROFILES, []);
                 if (isset($profiles[$profile_id])) {
-                    $profile = $profiles[$profile_id];
+                    $profile = array_merge($profile, $profiles[$profile_id]);
                 }
             } else {
                 $profile_id = guidv4();
@@ -113,6 +114,12 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
                       <option value="" ' . selected($profile['encryption'], '', false) . '>None</option>
                   </select></td></tr>';
 
+            echo '<tr><th scope="row"><label for="auth_mode">' . __('Authentication', Constants::DOMAIN) . '</label></th>
+                  <td><select name="auth_mode" id="ssmptms-auth_mode">
+                      <option value="login" ' . selected($profile['auth_mode'], 'login', false) . '>' . __('Username & Password', Constants::DOMAIN) . '</option>
+                      <option value="none" ' . selected($profile['auth_mode'], 'none', false) . '>' . __('No authentication (trusted relay)', Constants::DOMAIN) . '</option>
+                  </select></td></tr>';
+
             echo '<tr><th scope="row"><label for="autotls">' . __('Auto TLS', Constants::DOMAIN) . '</label></th>
                 <td>
                   <label>
@@ -121,10 +128,10 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
                   </label>
                 </td></tr>';
 
-            echo '<tr><th scope="row"><label for="username">' . __('Username', Constants::DOMAIN) . '</label></th>
+            echo '<tr id="ssmptms-row-username"><th scope="row"><label for="username">' . __('Username', Constants::DOMAIN) . '</label></th>
                   <td><input type="text" class="regular-text" name="username" id="username" value="' . esc_attr($profile['username']) . '"></td></tr>';
 
-            echo '<tr><th scope="row"><label for="password">' . __('Password', Constants::DOMAIN) . '</label></th>
+            echo '<tr id="ssmptms-row-password"><th scope="row"><label for="password">' . __('Password', Constants::DOMAIN) . '</label></th>
                   <td><input type="password" class="regular-text" name="password" id="password" value="">';
             if (!$is_new) {
                 echo $profile['password'] ? '<span style="color: green;">✔ ' . __('Password is set', Constants::DOMAIN) . '</span>'
@@ -177,6 +184,7 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
             $port       = intval($_POST['port']);
             $encryption = sanitize_text_field($_POST['encryption']);
             $autotls    = isset($_POST['autotls']) ? 1 : 0;
+            $auth_mode  = sanitize_text_field($_POST['auth_mode'] ?? 'login');
             $username   = sanitize_text_field($_POST['username']);
             $password   = $_POST['password'] ?? '';
             $sender     = isset($_POST['match_return_path']) ? $from_email : '';
@@ -197,6 +205,7 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
                 'port'       => $port,
                 'encryption' => $encryption,
                 'autotls'    => $autotls,
+                'auth_mode'  => $auth_mode,
                 'username'   => $username,
                 'force_from_email' => $force_from_email,
                 'match_return_path' => $match_return_path,
@@ -217,11 +226,13 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
             if ($port <= 0) {
                 $errors[] = __('Port must be a positive number.', Constants::DOMAIN);
             }
-            if (empty($username)) {
-                $errors[] = __('Username is required.', Constants::DOMAIN);
-            }
-            if (!$existing_profile && empty($password)) {
-                $errors[] = __('Password is required.', Constants::DOMAIN);
+            if ($auth_mode !== 'none') {
+                if (empty($username)) {
+                    $errors[] = __('Username is required.', Constants::DOMAIN);
+                }
+                if (!$existing_profile && empty($password)) {
+                    $errors[] = __('Password is required.', Constants::DOMAIN);
+                }
             }
         
             // If validation failed
@@ -233,7 +244,10 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
             }
         
             // Handle password encryption
-            if ($existing_profile) {
+            if ($auth_mode === 'none') {
+                $username = '';
+                $password = '';
+            } elseif ($existing_profile) {
                 // If no new password, reuse old one
                 if (empty($password) && isset($profiles[$profile_id]['password'])) {
                     $password = decrypt_password($profiles[$profile_id]['password']);
@@ -252,6 +266,7 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
                 'port'      => $port,
                 'encryption'=> $encryption,
                 'autotls'   => $autotls,
+                'auth_mode' => $auth_mode,
                 'username'  => $username,
                 'password'  => $encrypted_password,
                 'match_return_path' => $match_return_path,

@@ -64,8 +64,8 @@ msgid "When enabled, the plugin will stop processing emails sent through wp_mail
 msgstr "Ak je táto možnosť zapnutá, plugin prestane zasahovať do e-mailov odoslaných cez wp_mail()."
 
 #: admin/settings.php:17 admin/settings.php:18 admin/settings.php:40
-msgid "WO SMTP Mail Scheduler"
-msgstr "WO SMTP Mail Plánovač"
+msgid "M4W SMTP Mail Scheduler"
+msgstr "M4W SMTP Mail Plánovač"
 
 #: admin/settings.php:40 admin/utils.php:178
 msgid "Start"
@@ -426,7 +426,7 @@ msgstr "Automaticky nastaviť hlavičku Return-Path tak, aby zodpovedala e-mailo
 msgid "Always use the specified \"From\" name, even if another is provided by the sender."
 msgstr "Vždy použiť zadané meno „Od mena“, aj keď odosielateľ uvedie iné."
 
-#: wo-smtp-mail-scheduler.php:46
+#: m4w-smtp-mail-scheduler.php:46
 msgid "Every Minute"
 msgstr "Každú minútu"
 

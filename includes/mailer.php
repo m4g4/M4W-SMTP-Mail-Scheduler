@@ -280,7 +280,7 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
         public function mail_enqueue_email($to, $subject, $message, $headers, $attachments, $testing = 0) {        
             $profile = get_active_profile();
             if (empty($profile) || !is_array($profile)) {
-                error_log('WO SMTP Mail Scheduler: No valid SMTP profile available for email queuing.');
+                error_log('M4W SMTP Mail Scheduler: No valid SMTP profile available for email queuing.');
                 return false;
             }
         
@@ -316,9 +316,10 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
                 $mailer->isSMTP();
                 $mailer->Host       = isset($profile['host']) ? (string)$profile['host'] : '';
                 $mailer->Port       = isset($profile['port']) ? (int)$profile['port'] : 25;
-                $mailer->SMTPAuth   = true;
-                $mailer->Username   = isset($profile['username']) ? (string)$profile['username'] : '';
-                $mailer->Password   = isset($profile['password']) ? decrypt_password($profile['password']) : '';
+                $auth_mode = isset($profile['auth_mode']) ? (string)$profile['auth_mode'] : 'login';
+                $mailer->SMTPAuth   = ($auth_mode !== 'none');
+                $mailer->Username   = ($auth_mode !== 'none' && isset($profile['username'])) ? (string)$profile['username'] : '';
+                $mailer->Password   = ($auth_mode !== 'none' && isset($profile['password'])) ? decrypt_password($profile['password']) : '';
                 $mailer->Timeout    = 10;
                 $mailer->SMTPAutoTLS = !empty($profile['autotls']);
                 $encryption = isset($profile['encryption']) ? strtolower((string)$profile['encryption']) : '';
@@ -334,7 +335,7 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
 
                 return $mailer;
             } catch (\Exception $e) {
-                error_log('WO SMTP Mail Scheduler: prepare_mailer exception: ' . $e->getMessage());
+                error_log('M4W SMTP Mail Scheduler: prepare_mailer exception: ' . $e->getMessage());
                 return null;
             }
         }
