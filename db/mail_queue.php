@@ -120,9 +120,10 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
 
             if (false === $result) {
                 error_log('M4W SMTP Mail Scheduler: Failed to insert queued email. DB error: ' . $wpdb->last_error);
+                return false;
             }
 
-            return $result;
+            return $wpdb->insert_id;
         }
 
         public function get_emails_to_process($emails_per_minute) {
