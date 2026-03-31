@@ -77,6 +77,23 @@ if ( ! class_exists( __NAMESPACE__ . '\\General_Settings', false ) ) {
                 Constants::SETTINGS_SECTION_BASIC,
                 Constants::SECTION_BASIC
             );
+
+            register_setting(
+                Constants::GENERAL_OPTION_GROUP,
+                Constants::ENABLE_SCHEDULER,
+                [
+                    'type' => 'boolean',
+                    'sanitize_callback' => fn($value) => (bool) $value,
+                    'default' => true
+                ]
+            );
+            add_settings_field(
+                'enable_scheduler',
+                __('Enable email scheduler', Constants::DOMAIN),
+                [$this, 'enable_scheduler_callback'],
+                Constants::SETTINGS_SECTION_BASIC,
+                Constants::SECTION_BASIC
+            );
         }
 
         private function register_scheduler_settings() {
@@ -178,6 +195,17 @@ if ( ! class_exists( __NAMESPACE__ . '\\General_Settings', false ) ) {
                 <input type="checkbox" name="<?php echo esc_attr(Constants::DISABLE); ?>"
                        value="1" <?php checked($value, true); ?> />
                 <?php _e('When enabled, the plugin will stop processing emails sent through wp_mail().', Constants::DOMAIN); ?>
+            </label>
+            <?php
+        }
+
+        public function enable_scheduler_callback() {
+            $value = get_option(Constants::ENABLE_SCHEDULER, true);
+            ?>
+            <label>
+                <input type="checkbox" name="<?php echo esc_attr(Constants::ENABLE_SCHEDULER); ?>"
+                       value="1" <?php checked($value, true); ?> />
+                <?php _e('When enabled, emails will be queued and sent according to the scheduler settings. When disabled, emails will be sent immediately.', Constants::DOMAIN); ?>
             </label>
             <?php
         }

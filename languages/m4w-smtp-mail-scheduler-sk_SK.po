@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: WP SMTP Mail Scheduler\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-07 15:52+0200\n"
-"PO-Revision-Date: 2025-12-19 11:50+0100\n"
+"PO-Revision-Date: 2026-03-31 12:46+0200\n"
 "Last-Translator: m4g4\n"
 "Language-Team: \n"
 "Language: sk\n"
@@ -19,6 +19,10 @@ msgstr "Nastavenia plánovača emailov"
 #: admin/tabs/general_settings.php:73
 msgid "Disable plugin functionality"
 msgstr "Vypnúť funkčnosť pluginu"
+
+#: admin/tabs/general_settings.php:80
+msgid "Enable email scheduler"
+msgstr "Povoliť plánovač emailov"
 
 #: admin/scheduler_settings.php:58
 msgid "Emails per unit"
@@ -53,15 +57,30 @@ msgid "Invalid time unit selected."
 msgstr "Vybraná jednotka času je neplatná."
 
 msgid ""
-"This plugin intercepts all emails sent using WordPress’s wp_mail() function and processes them according to the configured rules (scheduling, sending, logging, status tracking, etc.).<br/>Other "
-"methods of sending emails in WordPress are not affected and bypass the plugin completely."
+"This plugin intercepts all emails sent using WordPress's wp_mail() function "
+"and processes them according to the configured rules (scheduling, sending, "
+"logging, status tracking, etc.).<br/>Other methods of sending emails in "
+"WordPress are not affected and bypass the plugin completely."
 msgstr ""
-"Tento plugin zachytáva všetky e-maily odoslané pomocou funkcie wp_mail() vo WordPresse a spracúva ich podľa nastavených pravidiel (plánovanie, odosielanie, logovanie, sledovanie stavu a pod.).<br/"
-">Iné spôsoby odosielania e-mailov vo WordPresse nie sú ovplyvnené a plugin ich neinterceptuje."
+"Tento plugin zachytáva všetky e-maily odoslané pomocou funkcie wp_mail() vo "
+"WordPresse a spracúva ich podľa nastavených pravidiel (plánovanie, "
+"odosielanie, logovanie, sledovanie stavu a pod.).<br/>Iné spôsoby odosielania "
+"e-mailov vo WordPresse nie sú ovplyvnené a plugin ich neinterceptuje."
 
 #: admin/tabs/general_settings.php:181
-msgid "When enabled, the plugin will stop processing emails sent through wp_mail()."
-msgstr "Ak je táto možnosť zapnutá, plugin prestane zasahovať do e-mailov odoslaných cez wp_mail()."
+msgid ""
+"When enabled, the plugin will stop processing emails sent through wp_mail()."
+msgstr ""
+"Ak je táto možnosť zapnutá, plugin prestane zasahovať do e-mailov odoslaných "
+"cez wp_mail()."
+
+#: admin/tabs/general_settings.php:188
+msgid ""
+"When enabled, emails will be queued and sent according to the scheduler "
+"settings. When disabled, emails will be sent immediately."
+msgstr ""
+"Keď je povolené, emaily budú zaradené do fronty a odoslané podľa nastavení "
+"plánovača. Keď je vypnuté, emaily budú odoslané okamžite."
 
 #: admin/settings.php:17 admin/settings.php:18 admin/settings.php:40
 msgid "M4W SMTP Mail Scheduler"
@@ -91,12 +110,21 @@ msgstr "Upraviť SMTP"
 msgid "General Settings"
 msgstr "Všeobecné nastavenia"
 
+#: admin/settings.php:84
+msgid "Filters"
+msgstr "Filtre"
+
 #: admin/settings.php:49
 msgid "Email Log"
 msgstr "Záznamy emailov"
 
+#: admin/settings.php:99
 msgid "Statistics"
 msgstr "Štatistiky"
+
+#: admin/settings.php:107
+msgid "Email Test"
+msgstr "Test emailu"
 
 msgid "Emails per hour"
 msgstr "Počet emailov za hodinu"
@@ -115,12 +143,12 @@ msgid "Disabled"
 msgstr "Vypnuté"
 
 #: admin/utils.php:142
-msgid "Email processing is turned off. Emails sent through wp_mail() are not handled by the plugin."
-msgstr "Spracovanie e-mailov je deaktivované. E-maily odoslané cez wp_mail() plugin neobsluhuje."
-
-#: admin/settings.php:53 admin/log_table.php:28
-msgid "Email Test"
-msgstr "Test e-mailu"
+msgid ""
+"Email processing is turned off. Emails sent through wp_mail() are not handled "
+"by the plugin."
+msgstr ""
+"Spracovanie e-mailov je deaktivované. E-maily odoslané cez wp_mail() plugin "
+"neobsluhuje."
 
 #: admin/settings.php:137
 msgid "When enabled, emails are logged but not sent to recipients."
@@ -182,7 +210,7 @@ msgstr "Email"
 msgid "Emails"
 msgstr "Emailov"
 
-#: admin/log_table.php:24
+#: admin/tabs/filters_settings.php:144 admin/log_table.php:24
 msgid "Recipient"
 msgstr "Príjemca"
 
@@ -374,8 +402,11 @@ msgid "No password set"
 msgstr "Heslo nie je nastavené"
 
 #: admin/profile_page.php:94
-msgid "Enter a new password to change it, or leave blank to keep the current password."
-msgstr "Zadajte nové heslo pre zmenu, alebo nechajte prázdne pre zachovanie aktuálneho hesla."
+msgid ""
+"Enter a new password to change it, or leave blank to keep the current password."
+msgstr ""
+"Zadajte nové heslo pre zmenu, alebo nechajte prázdne pre zachovanie aktuálneho "
+"hesla."
 
 #: admin/profile_page.php:101
 msgid "Add Profile"
@@ -414,17 +445,30 @@ msgid "Password is required."
 msgstr "Heslo je povinné."
 
 #: admin/profile_page.php:221
-msgid "SMTP connection test <strong>failed</strong>. Check credentials or server settings."
-msgstr "Test pripojenia SMTP <strong>zlyhal</strong>. Skontrolujte prihlasovacie údaje alebo nastavenia servera."
+msgid ""
+"SMTP connection test <strong>failed</strong>. Check credentials or server "
+"settings."
+msgstr ""
+"Test pripojenia SMTP <strong>zlyhal</strong>. Skontrolujte prihlasovacie údaje "
+"alebo nastavenia servera."
 
-msgid "Always use the specified \"From\" email address, even if another is provided by the sender."
-msgstr "Vždy použiť zadanú e-mailovú adresu „Od Email“, aj keď odosielateľ uvedie inú."
+msgid ""
+"Always use the specified \"From\" email address, even if another is provided "
+"by the sender."
+msgstr ""
+"Vždy použiť zadanú e-mailovú adresu \"Od Email\", aj keď odosielateľ uvedie "
+"inú."
 
-msgid "Automatically set the Return-Path header to match the \"From\" email address."
-msgstr "Automaticky nastaviť hlavičku Return-Path tak, aby zodpovedala e-mailovej adrese „Od“."
+msgid ""
+"Automatically set the Return-Path header to match the \"From\" email address."
+msgstr ""
+"Automaticky nastaviť hlavičku Return-Path tak, aby zodpovedala e-mailovej "
+"adrese \"Od\"."
 
-msgid "Always use the specified \"From\" name, even if another is provided by the sender."
-msgstr "Vždy použiť zadané meno „Od mena“, aj keď odosielateľ uvedie iné."
+msgid ""
+"Always use the specified \"From\" name, even if another is provided by the "
+"sender."
+msgstr "Vždy použiť zadané meno \"Od mena\", aj keď odosielateľ uvedie iné."
 
 #: m4w-smtp-mail-scheduler.php:46
 msgid "Every Minute"
@@ -441,3 +485,147 @@ msgstr "Aktuálne je naplánovaných %s (Limit: %s %s)"
 
 msgid "Settings"
 msgstr "Nastavenia"
+
+#: admin/tabs/filters_settings.php:42
+msgid "Email Filters"
+msgstr "Filtre emailov"
+
+#: admin/tabs/filters_settings.php:43
+msgid ""
+"Define rules to filter emails based on subject, body, or recipient. Matching "
+"emails will have the specified action applied."
+msgstr ""
+"Definujte pravidlá na filtrovanie emailov na základe predmetu, tela alebo "
+"príjemcu. Zodpovedajúce emaily budú mať aplikovanú špecifikovanú akciu."
+
+#: admin/tabs/filters_settings.php:47
+msgid "Add New Rule"
+msgstr "Pridať nové pravidlo"
+
+#: admin/tabs/filters_settings.php:56
+msgid "Add Filter Rule"
+msgstr "Pridať pravidlo filtra"
+
+#: admin/tabs/filters_settings.php:57
+msgid "Edit Filter Rule"
+msgstr "Upraviť pravidlo filtra"
+
+#: admin/tabs/filters_settings.php:63
+msgid "Search in Subject"
+msgstr "Hľadať v predmete"
+
+#: admin/tabs/filters_settings.php:67
+msgid "e.g., urgent, order confirmed"
+msgstr "napr. urgentné, objednávka potvrdená"
+
+#: admin/tabs/filters_settings.php:68
+msgid "Text or pattern to search in email subject."
+msgstr "Text alebo vzor na hľadanie v predmete emailu."
+
+#: admin/tabs/filters_settings.php:73
+msgid "Search in Body"
+msgstr "Hľadať v tele"
+
+#: admin/tabs/filters_settings.php:77
+msgid "e.g., invoice, thank you for your order"
+msgstr "napr. faktúra, ďakujeme za vašu objednávku"
+
+#: admin/tabs/filters_settings.php:78
+msgid "Text or pattern to search in email body."
+msgstr "Text alebo vzor na hľadanie v tele emailu."
+
+#: admin/tabs/filters_settings.php:83
+msgid "Search in Recipient"
+msgstr "Hľadať v príjemcovi"
+
+#: admin/tabs/filters_settings.php:87
+msgid "e.g., @gmail.com, newsletter@"
+msgstr "napr. @gmail.com, newsletter@"
+
+#: admin/tabs/filters_settings.php:88
+msgid "Text or pattern to search in recipient email addresses."
+msgstr "Text alebo vzor na hľadanie v emailových adresách príjemcu."
+
+#: admin/tabs/filters_settings.php:93
+msgid "Action"
+msgstr "Akcia"
+
+#: admin/tabs/filters_settings.php:100
+msgid "Bypass Scheduling"
+msgstr "Obísť plánovanie"
+
+#: admin/tabs/filters_settings.php:101
+msgid "Do Not Send"
+msgstr "Neodosielať"
+
+#: admin/tabs/filters_settings.php:102
+msgid "Set Priority"
+msgstr "Nastaviť prioritu"
+
+#: admin/tabs/filters_settings.php:109
+msgid "Scheduler Priority Value"
+msgstr "Hodnota priority plánovača"
+
+#: admin/tabs/filters_settings.php:112
+msgid "Set email priority (higher numbers = sent sooner)."
+msgstr "Nastaviť prioritu emailu (vyššie čísla = odoslané skôr)."
+
+#: admin/tabs/filters_settings.php:117
+msgid "Rule Priority"
+msgstr "Priorita pravidla"
+
+#: admin/tabs/filters_settings.php:120
+msgid "Higher priority rules are evaluated first."
+msgstr "Pravidlá s vyššou prioritou sú vyhodnocované ako prvé."
+
+#: admin/tabs/filters_settings.php:128
+msgid "Enable this rule"
+msgstr "Povoliť toto pravidlo"
+
+#: admin/tabs/filters_settings.php:133
+msgid "Save Rule"
+msgstr "Uložiť pravidlo"
+
+#: admin/tabs/filters_settings.php:143
+msgid "Body"
+msgstr "Telo"
+
+#: admin/tabs/filters_settings.php:156
+msgid "Inactive"
+msgstr "Neaktívny"
+
+#: admin/tabs/filters_settings.php:170
+msgid "Disable"
+msgstr "Zakázať"
+
+#: admin/tabs/filters_settings.php:174
+msgid "Enable"
+msgstr "Povoliť"
+
+#: admin/tabs/filters_settings.php:182
+msgid "No filter rules defined."
+msgstr "Nie sú definované žiadne pravidlá filtra."
+
+#: admin/tabs/filters_settings.php:347
+msgid "Name is required"
+msgstr "Názov je povinný"
+
+#: admin/tabs/filters_settings.php:351
+msgid "Invalid pattern in Subject field"
+msgstr "Neplatný vzor v poli predmetu"
+
+#: admin/tabs/filters_settings.php:354
+msgid "Invalid pattern in Body field"
+msgstr "Neplatný vzor v poli tela"
+
+#: admin/tabs/filters_settings.php:357
+msgid "Invalid pattern in Recipient field"
+msgstr "Neplatný vzor v poli príjemcu"
+
+#: admin/tabs/filters_settings.php:295
+msgid "Are you sure you want to toggle this filter?"
+msgstr "Naozaj chcete prepnúť tento filter?"
+
+#: admin/tabs/filters_settings.php:310
+msgid "Are you sure you want to delete this filter rule?"
+msgstr "Naozaj chcete odstrániť toto pravidlo filtra?"

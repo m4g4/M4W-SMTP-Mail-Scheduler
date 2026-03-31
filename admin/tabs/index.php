@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/general_settings.php';
+require_once __DIR__ . '/filters_settings.php';
 require_once __DIR__ . '/log_table.php';
 require_once __DIR__ . '/log_settings.php';
 require_once __DIR__ . '/profile_page.php';

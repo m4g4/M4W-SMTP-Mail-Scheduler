@@ -5,5 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/mail_queue.php';
+require_once __DIR__ . '/filters.php';
 
 ?>

@@ -58,6 +58,11 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
             dbDelta($sql);
         }
 
+        public function table_exists() {
+            global $wpdb;
+            return $wpdb->get_var("SHOW TABLES LIKE '$this->table_name'") === $this->table_name;
+        }
+
         public function drop_table() {
             global $wpdb;
             $wpdb->query("DROP TABLE IF EXISTS $this->table_name");
@@ -93,7 +98,7 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
             );
         }
 
-        public function queue_email($recipient, $subject, $message, $headers = [], $attachments = [], $scheduled_at = null, $active_profile = null, $testing = false) {
+        public function queue_email($recipient, $subject, $message, $headers = [], $attachments = [], $scheduled_at = null, $active_profile = null, $testing = false, $priority_override = null) {
             global $wpdb;
 
             $data = array(
@@ -106,9 +111,10 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
                 'profile_settings'=> wp_json_encode($active_profile),
                 'status'          => 'queued',
                 'testing'         => (int) $testing,
+                'priority'        => $priority_override !== null ? $priority_override : 0,
             );
 
-            $formats = array('%s','%s','%s','%s','%s','%s','%s','%s','%d');
+            $formats = array('%s','%s','%s','%s','%s','%s','%s','%s','%d','%d');
 
             $result = $wpdb->insert($this->table_name, $data, $formats);
 

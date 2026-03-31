@@ -5,7 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function ssmptms_activation() {
-    Ssmptms\Email_Queue::get_instance()->create_table();
+    if (!Ssmptms\Email_Queue::get_instance()->table_exists()) {
+        Ssmptms\Email_Queue::get_instance()->create_table();
+    }
+    if (!Ssmptms\Filter_Rules::get_instance()->table_exists()) {
+        Ssmptms\Filter_Rules::get_instance()->create_table();
+    }
 
     // bump version
     update_option( Ssmptms\Constants::DB_VERSION, Ssmptms\Constants::VERSION );
@@ -23,4 +28,10 @@ add_action( 'plugins_loaded', function() {
     }
 
     // DB upgrades come here
+
+    // DB Migration from < 1.8.1 to >= 1.9.0
+    // Create filter table if it doesn't exist (for plugin updates from versions before filters)
+    if (!Ssmptms\Filter_Rules::get_instance()->table_exists()) {
+        Ssmptms\Filter_Rules::get_instance()->create_table();
+    }
 });

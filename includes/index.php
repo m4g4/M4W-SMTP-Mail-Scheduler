@@ -6,5 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/scheduler.php';
 require_once __DIR__ . '/mailer.php';
+require_once dirname(__DIR__) . '/db/filters.php';
 
 ?>

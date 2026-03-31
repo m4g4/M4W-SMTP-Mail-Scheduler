@@ -95,6 +95,10 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
                        class="nav-tab <?php echo $active_tab === 'general' ? 'nav-tab-active' : ''; ?>">
                         <?php echo __('General Settings', Constants::DOMAIN); ?>
                     </a>
+                    <a href="?page=<?php echo esc_attr(Constants::SETTINGS_PAGE); ?>&tab=filters"
+                       class="nav-tab <?php echo $active_tab === 'filters' ? 'nav-tab-active' : ''; ?>">
+                        <?php echo __('Filters', Constants::DOMAIN); ?>
+                    </a>
                     <a href="?page=<?php echo esc_attr(Constants::SETTINGS_PAGE); ?>&tab=log"
                        class="nav-tab <?php echo $active_tab === 'log' ? 'nav-tab-active' : ''; ?>">
                         <?php echo __('Email Log', Constants::DOMAIN); ?>
@@ -112,6 +116,8 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
                 <?php
                 if ($active_tab === 'general') {
                     $this->render_general_settings_tab();
+                } elseif ($active_tab === 'filters') {
+                    Filters_Settings::get_instance()->render_tab();
                 } elseif ($active_tab === 'log') {
                     Log_Settings::get_instance()->render_tab();
                 } elseif ($active_tab === 'stats') {

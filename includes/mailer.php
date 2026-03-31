@@ -232,6 +232,7 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
 
         public function queue_mail_instead_of_sending($pre_wp_mail, $atts) {
             $disable_plugin = get_option(Constants::DISABLE, false);
+            $enable_scheduler = get_option(Constants::ENABLE_SCHEDULER, true);
 
             // Respect a bypass constant to allow immediate sending
             if ((defined('SMTP_MAIL_BYPASS_QUEUE') && SMTP_MAIL_BYPASS_QUEUE === true) || $disable_plugin) {
@@ -245,22 +246,34 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
             $headers = isset($atts['headers']) ? $atts['headers'] : array();
             $attachments = isset($atts['attachments']) ? $atts['attachments'] : array();
 
-            // Convert recipients to an array of email strings
-            $recipients = (array) $to;
-            $parsed_recipients = array();
-            foreach ($recipients as $r) {
-                // parse "Name <email@example.com>" or "email@example.com"
-                if (is_string($r)) {
-                    list($email, $name) = $this->parseAddress($r);
-                    if (is_email($email)) {
-                        $parsed_recipients[] = $email;
-                    }
-                }
-            }
+            $parsed_recipients = $this->parse_recipients($to);
 
             if (empty($parsed_recipients)) {
                 // Nothing to queue; let WP handle (or fail later)
                 return null;
+            }
+
+            $filter_result = $this->check_filters($subject, $message, $parsed_recipients);
+            if ($filter_result !== null) {
+                
+                if ($filter_result['action'] === 'do_not_send') {
+                    return true;
+                
+                } elseif ($filter_result['action'] === 'bypass' || $filter_result['action'] === 'set_priority') {
+                    $priority_override = ($filter_result['action'] === 'set_priority' && isset($filter_result['filter']->priority_value)) 
+                        ? intval($filter_result['filter']->priority_value) 
+                        : null;
+                    
+                        $this->mail_enqueue_email($parsed_recipients, $subject, $message, $headers, $attachments, false, $priority_override);
+                    return true;
+                }
+            }
+
+            // If scheduler is disabled, send immediately but still log to database
+            if (!$enable_scheduler) {
+                // Queue and send immediately
+                $this->mail_enqueue_email($parsed_recipients, $subject, $message, $headers, $attachments, false, null, true);
+                return true;
             }
 
             // Queue
@@ -277,7 +290,7 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
             return $queued_result ? true : null;
         }
 
-        public function mail_enqueue_email($to, $subject, $message, $headers, $attachments, $testing = 0) {        
+        public function mail_enqueue_email($to, $subject, $message, $headers, $attachments, $testing = 0, $priority_override = null, $send_immediately = false) {        
             $profile = get_active_profile();
             if (empty($profile) || !is_array($profile)) {
                 error_log('M4W SMTP Mail Scheduler: No valid SMTP profile available for email queuing.');
@@ -293,12 +306,22 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
                 $attachments,
                 current_time('mysql'),
                 $profile,
-                $testing
+                $testing,
+                $priority_override
             );
         
             // After inserting, prune if necessary
             if ($inserted !== false) {
                 $this->remove_exceeding_emails();
+
+                // If send_immediately is true, send the email right after queuing
+                if ($send_immediately) {
+                    $email = Email_Queue::get_instance()->get_email_by_id($inserted);
+                    if ($email) {
+                        $this->send_email($email);
+                    }
+                }
+
                 return true;
             }
         
@@ -529,6 +552,26 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
         }
 
         /**
+         * Parse recipients from wp_mail $to parameter
+         *
+         * @param mixed $to
+         * @return array
+         */
+        private function parse_recipients($to) {
+            $recipients_array = (array) $to;
+            $parsed_recipients = array();
+            foreach ($recipients_array as $r) {
+                if (is_string($r)) {
+                    list($email, $name) = $this->parseAddress($r);
+                    if (is_email($email)) {
+                        $parsed_recipients[] = $email;
+                    }
+                }
+            }
+            return $parsed_recipients;
+        }
+
+        /**
          * Helper: check if array is associative
          *
          * @param array $arr
@@ -659,6 +702,61 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
             }
 
             return null;
+        }
+
+        private function check_filters($subject, $message, $recipients) {
+            $filters = Filter_Rules::get_instance()->get_active();
+            if (empty($filters)) {
+                return null;
+            }
+
+            foreach ($filters as $filter) {
+                $matched = true;
+
+                // Check subject if defined
+                if (!empty($filter->search_subject)) {
+                    $matched = $this->match_pattern($filter->search_subject, $subject);
+                }
+
+                // Check body if defined
+                if ($matched && !empty($filter->search_body)) {
+                    $matched = $this->match_pattern($filter->search_body, $message);
+                }
+
+                // Check recipient if defined
+                if ($matched && !empty($filter->search_recipient)) {
+                    $matched = false;
+                    foreach ($recipients as $recipient) {
+                        if ($this->match_pattern($filter->search_recipient, $recipient)) {
+                            $matched = true;
+                            break;
+                        }
+                    }
+                }
+
+                if ($matched) {
+                    return ['action' => $filter->action, 'filter' => $filter];
+                }
+            }
+
+            return null;
+        }
+
+        private function match_pattern($pattern, $text) {
+            $pattern = trim($pattern);
+            $text = trim($text);
+
+            if ($pattern === '' || $text === '') {
+                return false;
+            }
+
+            // Check if pattern looks like regex (starts with / and ends with / or /flags)
+            if (preg_match('/^\/.*\/[a-z]*$/i', $pattern)) {
+                return @preg_match($pattern, $text) === 1;
+            }
+
+            // Plain text case-insensitive search
+            return stripos($text, $pattern) !== false;
         }
 
     }

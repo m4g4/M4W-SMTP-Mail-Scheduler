@@ -1,3 +1,12 @@
+## [1.9.0] - 2026-03-31
+
+- Added "Enable email scheduler" option in General Settings. When disabled, emails are sent immediately instead of being queued (default: enabled).
+- Added new "Filters" tab for email filtering rules.
+- Filters allow matching emails by subject, body, or recipient using plain text or regex patterns.
+- Filter actions: Bypass Scheduling (send immediately), Do Not Send (discard), Set Priority (custom queue priority).
+- Filter rules can be prioritized, enabled/disabled individually.
+- Added Slovak translations for new features.
+
 ## [1.8.1] - 2024-11-13
 
 - Added an authentication mode selector for SMTP profiles with support for password-less (trusted relay) connections.

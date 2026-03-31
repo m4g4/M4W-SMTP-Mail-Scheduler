@@ -11,6 +11,8 @@
 - **Admin Log Interface**: View queued, sent, and failed emails with details like recipient, subject, profile, and status.
 - **Retry Mechanism**: Automatically retries failed emails up to a configurable limit.
 - **Clean Logging**: Limits the number of stored email logs to prevent database bloat.
+- **Scheduler Toggle**: Enable or disable the email scheduler. When disabled, emails are sent immediately.
+- **Email Filters**: Create rules to filter emails based on subject, body, or recipient patterns. Actions include bypass scheduling, do not send, or set custom priority.
 
 ## Installation
 

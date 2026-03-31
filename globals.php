@@ -9,12 +9,15 @@ if (!defined('ABSPATH')) {
 final class Constants {
 
     // Do not forget to change the header in m4w-smtp-mail-scheduler as well when changing the plugin version.
-    public const PLUGIN_VERSION     = '1.7.1';
+    public const PLUGIN_VERSION     = '1.9.0';
     public const VERSION     = '1.2';
 
     /** Queue table */
     public const QUEUE_DB_NAME_OLD = 'simple_smtp_mail_scheduler_queue';
     public const QUEUE_DB_NAME     = 'ssmptms_queue';
+
+    /** Filter rules table */
+    public const FILTER_DB_NAME    = 'ssmptms_filters';
 
     // Plugin
     public const DOMAIN      = 'm4w-smtp-mail-scheduler';
@@ -29,6 +32,7 @@ final class Constants {
     public const EMAILS_PER_UNIT     = 'ssmptms_emails_per_unit';
     public const EMAILS_UNIT         = 'ssmptms_emails_unit';
     public const DISABLE             = 'ssmptms_disable';
+    public const ENABLE_SCHEDULER    = 'ssmptms_enable_scheduler';
     
     /** Stored values */
     public const EMAILS_SCHEDULER_LAST_TICK     = 'ssmptms_last_tick';
