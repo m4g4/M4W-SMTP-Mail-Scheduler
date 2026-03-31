@@ -187,6 +187,8 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                     border: 1px solid #888;
                     width: 500px;
                     max-width: 90%;
+                    max-height: 80vh;
+                    overflow-y: auto;
                 }
                 .ssmptms-close {
                     color: #aaa;
@@ -420,3 +422,5 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
         }
     }
 }
+
+Filters_Settings::get_instance();
