@@ -150,6 +150,14 @@ msgstr ""
 "Spracovanie e-mailov je deaktivované. E-maily odoslané cez wp_mail() plugin "
 "neobsluhuje."
 
+#: admin/utils.php:149
+msgid "Scheduler Disabled"
+msgstr "Plánovač vypnutý"
+
+#: admin/utils.php:150
+msgid "New emails are sent immediately without queuing. Previously queued emails will still be sent by the scheduler."
+msgstr "Nové e-maily sú odosielané okamžite bez zaradenia do fronty. Predtým zaradené e-maily budú stále odoslané plánovačom."
+
 #: admin/settings.php:137
 msgid "When enabled, emails are logged but not sent to recipients."
 msgstr "Keď je zapnuté, emaily sú zaznamenané, ale neodoslané príjemcom."

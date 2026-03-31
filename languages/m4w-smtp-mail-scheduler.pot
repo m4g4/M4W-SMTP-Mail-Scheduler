@@ -582,14 +582,20 @@ msgstr ""
 msgid "Emails Sent per Hour"
 msgstr ""
 
-#: admin/utils.php:141
+#: admin/utils.php:143
 msgid "Disabled"
 msgstr ""
 
-#: admin/utils.php:142
-msgid ""
-"Email processing is turned off. Emails sent through wp_mail() are not handled "
-"by the plugin."
+#: admin/utils.php:144
+msgid "Email processing is turned off. Emails sent through wp_mail() are not handled by the plugin."
+msgstr ""
+
+#: admin/utils.php:149
+msgid "Scheduler Disabled"
+msgstr ""
+
+#: admin/utils.php:150
+msgid "New emails are sent immediately without queuing. Previously queued emails will still be sent by the scheduler."
 msgstr ""
 
 #: admin/utils.php:166

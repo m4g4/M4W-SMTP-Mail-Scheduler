@@ -138,10 +138,20 @@ function get_profile_by_mail($from_email) {
 
 function print_system_status() {
     $disable_plugin = get_option(Constants::DISABLE, false);
+    $enable_scheduler = get_option(Constants::ENABLE_SCHEDULER, true);
+    
     if ($disable_plugin) {
         echo "<div class='ssmptms-status-bar'>";
         echo '<span class="ssmptms-status-bar-disabled">🛑 ' . esc_html__('Disabled', Constants::DOMAIN) . '</span>';
         echo '<p class="description">' . esc_html__('Email processing is turned off. Emails sent through wp_mail() are not handled by the plugin.', Constants::DOMAIN) . '</p>';
+        echo '</div>';
+        return;
+    }
+
+    if (!$enable_scheduler) {
+        echo "<div class='ssmptms-status-bar'>";
+        echo '<span class="ssmptms-status-bar-disabled">⏩ ' . esc_html__('Scheduler Disabled', Constants::DOMAIN) . '</span>';
+        echo '<p class="description">' . esc_html__('New emails are sent immediately without queuing. Previously queued emails will still be sent by the scheduler.', Constants::DOMAIN) . '</p>';
         echo '</div>';
         return;
     }
