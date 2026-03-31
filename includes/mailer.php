@@ -257,6 +257,7 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
             if ($filter_result !== null) {
                 
                 if ($filter_result['action'] === 'do_not_send') {
+                    $this->mail_enqueue_email($parsed_recipients, $subject, $message, $headers, $attachments, false, null, false, 'filtered');
                     return true;
                 
                 } elseif ($filter_result['action'] === 'bypass' || $filter_result['action'] === 'set_priority') {
@@ -290,7 +291,7 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
             return $queued_result ? true : null;
         }
 
-        public function mail_enqueue_email($to, $subject, $message, $headers, $attachments, $testing = 0, $priority_override = null, $send_immediately = false) {        
+        public function mail_enqueue_email($to, $subject, $message, $headers, $attachments, $testing = 0, $priority_override = null, $send_immediately = false, $status = 'queued') {        
             $profile = get_active_profile();
             if (empty($profile) || !is_array($profile)) {
                 error_log('M4W SMTP Mail Scheduler: No valid SMTP profile available for email queuing.');
@@ -307,7 +308,8 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
                 current_time('mysql'),
                 $profile,
                 $testing,
-                $priority_override
+                $priority_override,
+                $status
             );
         
             // After inserting, prune if necessary

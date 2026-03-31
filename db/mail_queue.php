@@ -21,10 +21,11 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
 
         public static function get_instance() {
 		    if ( null === self::$instance ) {
-			    self::$instance = new self();
+                self::$instance = new self();
 
                 // FIX
                 self::$instance->db_update_fix_created_at();
+                self::$instance->db_update_add_filtered_status();
 		    }
 
 		    return self::$instance;
@@ -45,7 +46,7 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
                 scheduled_at DATETIME NOT NULL,
                 profile_settings LONGTEXT DEFAULT NULL,
                 priority INT DEFAULT 0,
-                status ENUM('queued', 'processing', 'sent', 'failed') DEFAULT 'queued',
+                status ENUM('queued', 'processing', 'sent', 'failed', 'filtered') DEFAULT 'queued',
                 retries INT UNSIGNED DEFAULT 0,
                 last_attempt_at DATETIME DEFAULT NULL,
                 error_message TEXT DEFAULT NULL,
@@ -98,7 +99,7 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
             );
         }
 
-        public function queue_email($recipient, $subject, $message, $headers = [], $attachments = [], $scheduled_at = null, $active_profile = null, $testing = false, $priority_override = null) {
+        public function queue_email($recipient, $subject, $message, $headers = [], $attachments = [], $scheduled_at = null, $active_profile = null, $testing = false, $priority_override = null, $status = 'queued') {
             global $wpdb;
 
             $data = array(
@@ -109,7 +110,7 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
                 'attachments'     => maybe_serialize($attachments),
                 'scheduled_at'    => $scheduled_at,
                 'profile_settings'=> wp_json_encode($active_profile),
-                'status'          => 'queued',
+                'status'          => $status,
                 'testing'         => (int) $testing,
                 'priority'        => $priority_override !== null ? $priority_override : 0,
             );
@@ -362,13 +363,14 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
                      WHERE email_id IN (
                          SELECT email_id FROM (
                              SELECT email_id FROM {$this->table_name}
-                             WHERE status IN (%s, %s)
+                             WHERE status IN (%s, %s, %s)
                              ORDER BY created_at ASC
                              LIMIT %d
                          ) AS t
                      )",
                     'sent',
                     'failed',
+                    'filtered',
                     $to_delete
                 );
 
@@ -405,6 +407,33 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
             }
         
             update_option('ssmptms_created_at_fixed_v2', 'yes');
+        }
+
+        private function db_update_add_filtered_status() {
+            global $wpdb;
+
+            if (get_option('ssmptms_status_filtered_added') === 'yes') {
+                return;
+            }
+
+            if (!$this->table_exists()) {
+                return;
+            }
+
+            $column = $wpdb->get_row($wpdb->prepare("SHOW COLUMNS FROM {$this->table_name} LIKE %s", 'status'));
+            if (!$column || empty($column->Type)) {
+                return;
+            }
+
+            if (strpos($column->Type, 'filtered') !== false) {
+                update_option('ssmptms_status_filtered_added', 'yes');
+                return;
+            }
+
+            $updated = $wpdb->query("ALTER TABLE {$this->table_name} MODIFY status ENUM('queued', 'processing', 'sent', 'failed', 'filtered') DEFAULT 'queued'");
+            if ($updated !== false) {
+                update_option('ssmptms_status_filtered_added', 'yes');
+            }
         }
     }
 }

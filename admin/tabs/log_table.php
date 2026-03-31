@@ -79,6 +79,7 @@ class Log_Table extends \WP_List_Table {
             'processing' => __('Processing', Constants::DOMAIN),
             'sent'       => __('Sent', Constants::DOMAIN),
             'failed'     => __('Failed', Constants::DOMAIN),
+            'filtered'   => __('Filtered', Constants::DOMAIN),
         ];
 
         echo '<div class="alignleft actions">';
@@ -163,6 +164,7 @@ class Log_Table extends \WP_List_Table {
                     'processing' => 'orange',
                     'sent'       => 'green',
                     'failed'     => 'red',
+                    'filtered'   => 'gray',
                 ];
                 $color = $status_colors[$item->status] ?? 'gray';
                 return '<span style="color:' . esc_attr($color) . '">' . esc_html($status) . '</span>';

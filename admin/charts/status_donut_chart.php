@@ -57,6 +57,7 @@ if (!class_exists(__NAMESPACE__ . '\\Donut_Chart', false)) {
                 'failed'     => '#ef4444',
                 'queued'     => '#f97316',
                 'processing' => '#3b82f6',
+                'filtered'   => '#64748b',
             ];
 
             $data = [

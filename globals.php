@@ -62,7 +62,7 @@ final class Constants {
     // Scheduler
     public const SCHEDULER_EVENT_NAME = 'ssmptms_send_emails_event';
 
-    public const ALL_STATUSES = ['queued', 'processing', 'sent', 'failed'];
+    public const ALL_STATUSES = ['queued', 'processing', 'sent', 'failed', 'filtered'];
 
     public static function get_status_text(string $status): string {
         switch ($status) {
@@ -70,6 +70,7 @@ final class Constants {
             case 'processing': return __('Processing', self::DOMAIN);
             case 'sent': return __('Sent', self::DOMAIN);
             case 'failed': return __('Failed', self::DOMAIN);
+            case 'filtered': return __('Filtered', self::DOMAIN);
             default: return '';
         }
     }
