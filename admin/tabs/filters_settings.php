@@ -73,7 +73,7 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                                 <tr>
                                     <th><?php echo esc_html__('Action', Constants::DOMAIN); ?></th>
                                     <td>
-                                        <select name="action" id="filter_action">
+                                        <select name="filter_action" id="filter_action">
                                             <?php foreach ($actions as $value => $label): ?>
                                                 <option value="<?php echo esc_attr($value); ?>"><?php echo esc_html($label); ?></option>
                                             <?php endforeach; ?>
@@ -131,7 +131,7 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                     <tbody>
                         <?php if (!empty($filters)): ?>
                             <?php foreach ($filters as $filter): ?>
-                                <tr data-id="<?php echo esc_attr($filter->id); ?>">
+                                <tr data-id="<?php echo esc_attr($filter->id); ?>" data-action="<?php echo esc_attr($filter->action); ?>" data-priority-value="<?php echo esc_attr($filter->priority_value); ?>">
                                     <td><?php echo esc_html($filter->name); ?></td>
                                     <td><code><?php echo esc_html($filter->search_subject ?? ''); ?></code></td>
                                     <td><code><?php echo esc_html($filter->search_body ?? ''); ?></code></td>
@@ -236,13 +236,14 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                     $('#filter_search_recipient').val(row.children('td:eq(3)').find('code').text());
                     $('#filter_priority').val(row.children('td:eq(5)').text());
                     
-                    var actionText = row.children('td:eq(4)').text().trim();
-                    $('#filter_action option').each(function() {
-                        if ($(this).text() === actionText) {
-                            $('#filter_action').val($(this).val());
-                            return false;
-                        }
-                    });
+                    var actionValue = row.data('action');
+                    if (actionValue) {
+                        $('#filter_action').val(actionValue);
+                    }
+                    var priorityValue = row.data('priorityValue');
+                    if (typeof priorityValue !== 'undefined') {
+                        $('#filter_priority_value').val(priorityValue);
+                    }
                     
                     if ($('#filter_action').val() === 'set_priority') {
                         $('#filter_priority_row').show();
@@ -277,7 +278,7 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                         search_subject: $('#filter_search_subject').val(),
                         search_body: $('#filter_search_body').val(),
                         search_recipient: $('#filter_search_recipient').val(),
-                        action: $('#filter_action').val(),
+                        filter_action: $('#filter_action').val(),
                         priority_value: $('#filter_priority_value').val(),
                         priority: $('#filter_priority').val(),
                         is_active: $('#filter_is_active').prop('checked') ? 1 : 0
@@ -339,7 +340,7 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                 'search_subject' => isset($_POST['search_subject']) ? trim($_POST['search_subject']) : '',
                 'search_body' => isset($_POST['search_body']) ? trim($_POST['search_body']) : '',
                 'search_recipient' => isset($_POST['search_recipient']) ? trim($_POST['search_recipient']) : '',
-                'action' => isset($_POST['action']) ? sanitize_text_field($_POST['action']) : 'bypass',
+                'action' => $this->get_filter_action($_POST),
                 'priority_value' => isset($_POST['priority_value']) ? intval($_POST['priority_value']) : 0,
                 'priority' => isset($_POST['priority']) ? intval($_POST['priority']) : 0,
                 'is_active' => isset($_POST['is_active']) ? (int) $_POST['is_active'] : 1,
@@ -377,6 +378,19 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                 return @preg_match($pattern, '') !== false;
             }
             return true;
+        }
+
+        private function get_filter_action($post_data) {
+            if (isset($post_data['filter_action'])) {
+                return sanitize_text_field($post_data['filter_action']);
+            }
+            if (isset($post_data['action'])) {
+                $fallback = sanitize_text_field($post_data['action']);
+                if (in_array($fallback, array_keys(Filter_Rules::get_actions()), true)) {
+                    return $fallback;
+                }
+            }
+            return 'bypass';
         }
 
         public function ajax_delete_filter() {
