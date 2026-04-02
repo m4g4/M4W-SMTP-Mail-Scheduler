@@ -66,84 +66,116 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
             echo '<input type="hidden" name="action" value="ssmptms_profile_save">';
             echo '<input type="hidden" name="profile_id" value="' . esc_attr($profile_id) . '">';
 
-            echo '<table class="form-table">';
-            echo '<tr><th scope="row"><label for="label">' . __('Label', Constants::DOMAIN) . '</label></th>
-                  <td><input type="text" class="regular-text" name="label" id="label" value="' . esc_attr($profile['label']) . '"></td></tr>';
+            echo '<div class="ssmptms-profile-grid">';
 
-            echo '<tr>
-                <th scope="row"><label for="from_email">' . __('From Email', Constants::DOMAIN) . '</label></th>
-                <td>
-                    <input type="email" class="regular-text" name="from_email" id="from_email" value="' . esc_attr($profile['from_email']) . '">
-                    <div style="padding-top: 10px;">
-                    <label>
-                        <input type="checkbox" name="force_from_email" id="force_from_email" value="1" ' . checked(!empty($profile['force_from_email']), true, false) . '>
-                        ' . __('Always use the specified "From" email address, even if another is provided by the sender.', Constants::DOMAIN) . '
-                    </label>
-                    </div>
-                    <div>
-                    <label>
-                        <input type="checkbox" name="match_return_path" id="match_return_path" value="1" ' . checked(!empty($profile['match_return_path']), true, false) . '>
-                        ' . __('Automatically set the Return-Path header to match the "From" email address.', Constants::DOMAIN) . '
-                    </label>
-                    </div>
-                </td>
-            </tr>';
+            echo '<div class="ssmptms-profile-card">';
+            echo '<h3>' . esc_html__('Profile Details', Constants::DOMAIN) . '</h3>';
+            echo '<p class="description">' . esc_html__('Set a friendly label and sender information for this profile.', Constants::DOMAIN) . '</p>';
 
-            echo '<tr><th scope="row"><label for="from_name">' . __('From Name', Constants::DOMAIN) . '</label></th>
-                  <td>
-                    <input type="text" class="regular-text" name="from_name" id="from_name" value="' . esc_attr($profile['from_name']) . '">  
-                    <div style="padding-top: 10px;">
-                    <label>
-                        <input type="checkbox" name="force_from_name" id="force_from_name" value="1" ' . checked(!empty($profile['force_from_name']), true, false) . '>
-                            ' . __('Always use the specified "From" name, even if another is provided by the sender.', Constants::DOMAIN) . '
-                    </label>
-                    </div>
-                  </td>
-                  </tr>';
+            echo '<div class="ssmptms-field">';
+            echo '<label for="label">' . esc_html__('Label', Constants::DOMAIN) . ' <span class="ssmptms-required">*</span></label>';
+            echo '<input type="text" class="regular-text ssmptms-input" name="label" id="label" value="' . esc_attr($profile['label']) . '" required>';
+            echo '<p class="description">' . esc_html__('Used in the profile list and log filters.', Constants::DOMAIN) . '</p>';
+            echo '</div>';
 
-            echo '<tr><th scope="row"><label for="host">' . __('SMTP Host', Constants::DOMAIN) . '</label></th>
-                  <td><input type="text" class="regular-text code" name="host" id="host" value="' . esc_attr($profile['host']) . '"></td></tr>';
+            echo '<div class="ssmptms-field">';
+            echo '<label for="from_email">' . esc_html__('From Email', Constants::DOMAIN) . ' <span class="ssmptms-required">*</span></label>';
+            echo '<input type="email" class="regular-text ssmptms-input" name="from_email" id="from_email" value="' . esc_attr($profile['from_email']) . '" required autocomplete="email">';
+            echo '<p class="description">' . esc_html__('This is the sender email address recipients will see.', Constants::DOMAIN) . '</p>';
+            echo '</div>';
 
-            echo '<tr><th scope="row"><label for="port">' . __('Port', Constants::DOMAIN) . '</label></th>
-                  <td><input type="number" class="small-text" name="port" id="port" value="' . esc_attr($profile['port']) . '"></td></tr>';
+            echo '<div class="ssmptms-field ssmptms-field--checkbox">';
+            echo '<label class="ssmptms-checkbox">';
+            echo '<input type="checkbox" name="force_from_email" id="force_from_email" value="1" ' . checked(!empty($profile['force_from_email']), true, false) . '>';
+            echo '<span>' . esc_html__('Always use the specified "From" email address, even if another is provided by the sender.', Constants::DOMAIN) . '</span>';
+            echo '</label>';
+            echo '</div>';
 
-            echo '<tr><th scope="row"><label for="encryption">' . __('Encryption', Constants::DOMAIN) . '</label></th>
-                  <td><select name="encryption" id="encryption">
-                      <option value="tls" ' . selected($profile['encryption'], 'tls', false) . '>TLS</option>
-                      <option value="ssl" ' . selected($profile['encryption'], 'ssl', false) . '>SSL</option>
-                      <option value="" ' . selected($profile['encryption'], '', false) . '>None</option>
-                  </select></td></tr>';
+            echo '<div class="ssmptms-field ssmptms-field--checkbox">';
+            echo '<label class="ssmptms-checkbox">';
+            echo '<input type="checkbox" name="match_return_path" id="match_return_path" value="1" ' . checked(!empty($profile['match_return_path']), true, false) . '>';
+            echo '<span>' . esc_html__('Automatically set the Return-Path header to match the "From" email address.', Constants::DOMAIN) . '</span>';
+            echo '</label>';
+            echo '</div>';
 
-            echo '<tr><th scope="row"><label for="auth_mode">' . __('Authentication', Constants::DOMAIN) . '</label></th>
-                  <td><select name="auth_mode" id="ssmptms-auth_mode">
-                      <option value="login" ' . selected($profile['auth_mode'], 'login', false) . '>' . __('Username & Password', Constants::DOMAIN) . '</option>
-                      <option value="none" ' . selected($profile['auth_mode'], 'none', false) . '>' . __('No authentication (trusted relay)', Constants::DOMAIN) . '</option>
-                  </select></td></tr>';
+            echo '<div class="ssmptms-field">';
+            echo '<label for="from_name">' . esc_html__('From Name', Constants::DOMAIN) . '</label>';
+            echo '<input type="text" class="regular-text ssmptms-input" name="from_name" id="from_name" value="' . esc_attr($profile['from_name']) . '" autocomplete="name">';
+            echo '<p class="description">' . esc_html__('Optional sender name shown in email clients.', Constants::DOMAIN) . '</p>';
+            echo '</div>';
 
-            echo '<tr><th scope="row"><label for="autotls">' . __('Auto TLS', Constants::DOMAIN) . '</label></th>
-                <td>
-                  <label>
-                    <input type="checkbox" name="autotls" id="autotls" value="1" ' . checked(!empty($profile['autotls']), true, false) . '>
-                    ' . __('Enable Auto TLS (automatically upgrade to TLS if available)', Constants::DOMAIN) . '
-                  </label>
-                </td></tr>';
+            echo '<div class="ssmptms-field ssmptms-field--checkbox">';
+            echo '<label class="ssmptms-checkbox">';
+            echo '<input type="checkbox" name="force_from_name" id="force_from_name" value="1" ' . checked(!empty($profile['force_from_name']), true, false) . '>';
+            echo '<span>' . esc_html__('Always use the specified "From" name, even if another is provided by the sender.', Constants::DOMAIN) . '</span>';
+            echo '</label>';
+            echo '</div>';
+            echo '</div>';
 
-            echo '<tr id="ssmptms-row-username"><th scope="row"><label for="username">' . __('Username', Constants::DOMAIN) . '</label></th>
-                  <td><input type="text" class="regular-text" name="username" id="username" value="' . esc_attr($profile['username']) . '"></td></tr>';
+            echo '<div class="ssmptms-profile-card">';
+            echo '<h3>' . esc_html__('SMTP Server', Constants::DOMAIN) . '</h3>';
+            echo '<p class="description">' . esc_html__('Connection settings for your SMTP provider.', Constants::DOMAIN) . '</p>';
 
-            echo '<tr id="ssmptms-row-password"><th scope="row"><label for="password">' . __('Password', Constants::DOMAIN) . '</label></th>
-                  <td><input type="password" class="regular-text" name="password" id="password" value="">';
+            echo '<div class="ssmptms-field-row">';
+            echo '<div class="ssmptms-field">';
+            echo '<label for="host">' . esc_html__('SMTP Host', Constants::DOMAIN) . ' <span class="ssmptms-required">*</span></label>';
+            echo '<input type="text" class="regular-text ssmptms-input ssmptms-input--code" name="host" id="host" value="' . esc_attr($profile['host']) . '" required placeholder="smtp.example.com">';
+            echo '</div>';
+
+            echo '<div class="ssmptms-field ssmptms-field--sm">';
+            echo '<label for="port">' . esc_html__('Port', Constants::DOMAIN) . ' <span class="ssmptms-required">*</span></label>';
+            echo '<input type="number" class="small-text ssmptms-input ssmptms-input--sm" name="port" id="port" value="' . esc_attr($profile['port']) . '" required>';
+            echo '</div>';
+            echo '</div>';
+
+            echo '<div class="ssmptms-field">';
+            echo '<label for="encryption">' . esc_html__('Encryption', Constants::DOMAIN) . '</label>';
+            echo '<select name="encryption" id="encryption" class="ssmptms-select">';
+            echo '<option value="tls" ' . selected($profile['encryption'], 'tls', false) . '>TLS</option>';
+            echo '<option value="ssl" ' . selected($profile['encryption'], 'ssl', false) . '>SSL</option>';
+            echo '<option value="" ' . selected($profile['encryption'], '', false) . '>' . esc_html__('None', Constants::DOMAIN) . '</option>';
+            echo '</select>';
+            echo '</div>';
+
+            echo '<div class="ssmptms-field ssmptms-field--checkbox">';
+            echo '<label class="ssmptms-checkbox">';
+            echo '<input type="checkbox" name="autotls" id="autotls" value="1" ' . checked(!empty($profile['autotls']), true, false) . '>';
+            echo '<span>' . esc_html__('Enable Auto TLS (automatically upgrade to TLS if available)', Constants::DOMAIN) . '</span>';
+            echo '</label>';
+            echo '</div>';
+
+            echo '<div class="ssmptms-field">';
+            echo '<label for="ssmptms-auth_mode">' . esc_html__('Authentication', Constants::DOMAIN) . '</label>';
+            echo '<select name="auth_mode" id="ssmptms-auth_mode" class="ssmptms-select">';
+            echo '<option value="login" ' . selected($profile['auth_mode'], 'login', false) . '>' . esc_html__('Username & Password', Constants::DOMAIN) . '</option>';
+            echo '<option value="none" ' . selected($profile['auth_mode'], 'none', false) . '>' . esc_html__('No authentication (trusted relay)', Constants::DOMAIN) . '</option>';
+            echo '</select>';
+            echo '</div>';
+
+            echo '<div id="ssmptms-row-username" class="ssmptms-field">';
+            echo '<label for="username">' . esc_html__('Username', Constants::DOMAIN) . '</label>';
+            echo '<input type="text" class="regular-text ssmptms-input" name="username" id="username" value="' . esc_attr($profile['username']) . '" autocomplete="username">';
+            echo '</div>';
+
+            echo '<div id="ssmptms-row-password" class="ssmptms-field">';
+            echo '<label for="password">' . esc_html__('Password', Constants::DOMAIN) . '</label>';
+            echo '<input type="password" class="regular-text ssmptms-input" name="password" id="password" value="" autocomplete="new-password">';
             if (!$is_new) {
-                echo $profile['password'] ? '<span style="color: green;">✔ ' . __('Password is set', Constants::DOMAIN) . '</span>'
-                                          : '<span style="color: red;">' . __('No password set', Constants::DOMAIN) . '</span>';
-                echo '<p class="description">' . __('Enter a new password to change it, or leave blank to keep the current password.', Constants::DOMAIN) . '</p>';
+                $password_state_class = $profile['password'] ? 'ssmptms-password-set' : 'ssmptms-password-missing';
+                $password_state_text = $profile['password'] ? __('Password is set.', Constants::DOMAIN) : __('No password set.', Constants::DOMAIN);
+                echo '<p class="description ssmptms-password-state ' . esc_attr($password_state_class) . '">' . esc_html($password_state_text) . '</p>';
+                echo '<p class="description">' . esc_html__('Enter a new password to change it, or leave blank to keep the current password.', Constants::DOMAIN) . '</p>';
             }
-            echo '</td></tr>';
+            echo '</div>';
 
-            echo '</table>';
+            echo '</div>';
+
+            echo '</div>';
 
             echo '<div class="ssmptms-profile-button-group">';
-            submit_button($is_new ? __('Add Profile', Constants::DOMAIN) : __('Save Profile', Constants::DOMAIN));
+            echo '<button type="submit" class="button button-primary" id="ssmptms-profile-save">';
+            echo '<span class="ssmptms-button-text">' . esc_html($is_new ? __('Add Profile', Constants::DOMAIN) : __('Save Profile', Constants::DOMAIN)) . '</span>';
+            echo '</button>';
             echo '<div class="ssmptms-profile-back-button-wrapper">';
             echo '<a href="' . admin_url('options-general.php?page=' . Constants::SETTINGS_PAGE) . '">';
             echo '<button type="button" class="button button-secondary">&larr; ' . __('Back', Constants::DOMAIN) . '</button>';

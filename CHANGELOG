@@ -1,3 +1,10 @@
+## [1.10.0] - 2026-04-02
+
+- Added "Filtered" status for emails that match filter rules set to "Do Not Send" action.
+- Email logs now display the "filtered" status with distinct styling.
+- Status donut chart includes "filtered" count.
+- Database migration automatically adds the new status to existing installations.
+
 ## [1.9.0] - 2026-03-31
 
 - Added "Enable email scheduler" option in General Settings. When disabled, emails are sent immediately instead of being queued (default: enabled).

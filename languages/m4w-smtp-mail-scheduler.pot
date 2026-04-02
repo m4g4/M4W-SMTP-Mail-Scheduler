@@ -490,7 +490,7 @@ msgid "Save Rule"
 msgstr ""
 
 #: admin/tabs/filters_settings.php:141
-msgid "Name"
+msgid "Rule Name"
 msgstr ""
 
 #: admin/tabs/filters_settings.php:142
@@ -638,4 +638,24 @@ msgstr ""
 
 #: globals.php:76
 msgid "per Day"
+msgstr ""
+
+#: admin/js/filters_page.js:83 admin/js/profile_page.js:56
+msgid "Saving..."
+msgstr ""
+
+#: admin/js/filters_page.js:106
+msgid "Error saving filter"
+msgstr ""
+
+#: admin/js/filters_page.js:110 admin/js/filters_page.js:138 admin/js/filters_page.js:161
+msgid "Request failed. Please try again."
+msgstr ""
+
+#: admin/js/filters_page.js:124
+msgid "Working..."
+msgstr ""
+
+#: admin/js/filters_page.js:147
+msgid "Deleting..."
 msgstr ""

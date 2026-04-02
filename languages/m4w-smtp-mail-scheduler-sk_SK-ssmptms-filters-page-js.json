@@ -1,0 +1,23 @@
+{
+  "translation-revision-date": "2026-04-02 13:00:00+0000",
+  "generator": "Manual JSON Template",
+  "domain": "m4w-smtp-mail-scheduler",
+  "locale_data": {
+    "m4w-smtp-mail-scheduler": {
+      "": {
+        "domain": "m4w-smtp-mail-scheduler",
+        "plural-forms": "nplurals=2; plural=(n != 1);",
+        "lang": "fr_FR"
+      },
+      "Add Filter Rule": ["Pridať pravidlo filtra"],
+      "Edit Filter Rule": ["Upraviť pravidlo filtra"],
+      "Saving...": ["Ukladanie..."],
+      "Error saving filter": ["Chyba pri ukladaní filtra"],
+      "Request failed. Please try again.": ["Požiadavka zlyhala. Skúste to znova."],
+      "Are you sure you want to toggle this filter?": ["Naozaj chcete prepnúť tento filter?"],
+      "Working...": ["Pracujem..."],
+      "Are you sure you want to delete this filter rule?": ["Naozaj chcete odstrániť toto pravidlo filtra?"],
+      "Deleting...": ["Odstraňovanie..."]
+    }
+  }
+}

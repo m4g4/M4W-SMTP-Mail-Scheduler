@@ -2,7 +2,7 @@
 /**
  * Plugin Name: M4W SMTP Mail Scheduler
  * Description: Intercepts WordPress emails, queues them, and sends via SMTP with retry logic and logging.
- * Version:     1.9.0
+ * Version:     1.10.0
  * Author:      m4g4
  * License:     GPLv3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -19,7 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-define('SSMPTMS_PLUGIN',    plugin_basename(__FILE__));
+define('SSMPTMS_PLUGIN',              plugin_basename(__FILE__));
+define('SSMPTMS_PLUGIN_LANG_PATH',    plugin_dir_path( __FILE__ ) . 'languages');
 
 // TESTING MODE
 define('SSMPTMS_TESTING_MODE', 0);
@@ -39,7 +40,7 @@ register_deactivation_hook( __FILE__, 'ssmptms_deactivation' );
 
 add_action('plugins_loaded', 'ssmptms_textdomain');
 function ssmptms_textdomain() {
-    load_plugin_textdomain(Ssmptms\Constants::DOMAIN, false, basename(dirname(__FILE__)) . '/languages/' );
+    load_plugin_textdomain(Ssmptms\Constants::DOMAIN, false, plugin_basename(__DIR__) . '/languages/' );
 }
 
 function ssmptms_deactivation() {

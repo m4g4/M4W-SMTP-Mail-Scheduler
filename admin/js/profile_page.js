@@ -1,5 +1,9 @@
 jQuery(document).ready(function($) {
+    const { __ } = wp.i18n;
+    const textDomain = ssmptms_profile_page.text_domain;
+
     const form = $('.ssmptms-profile-form');
+    const saveButton = $('#ssmptms-profile-save');
 
     if (!form.length) return; // Safe check if form doesn't exist
 
@@ -47,4 +51,21 @@ jQuery(document).ready(function($) {
 
     form.on('change', '#ssmptms-auth_mode', toggleAuthRows);
     toggleAuthRows();
+
+    function setSubmitLoading(loading) {
+        window.ssmptmsUtils.setSubmitLoading(
+            saveButton,
+            null,
+            loading,
+            __('Saving...', textDomain)
+        );
+    }
+
+    form.on('submit', function() {
+        if (form.data('loading')) {
+            return false;
+        }
+        form.data('loading', true);
+        setSubmitLoading(true);
+    });
 });

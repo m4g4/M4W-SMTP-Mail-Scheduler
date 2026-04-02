@@ -34,14 +34,8 @@
 }
 .ssmptms-headline:hover .ssmptms-tooltip-text { visibility:visible;opacity:1; }
 
-.ssmptms-profile-button-group { 
-    display: flex; 
-    gap: 12px; 
-}
-
-.ssmptms-profile-back-button-wrapper {
-    padding-top: 30px;
-}
+.ssmptms-profile-button-group {  display: flex;  gap: 12px; }
+.ssmptms-profile-button-group p { margin: 0; padding: 0;}
 
 .ssmptms-status-bar {max-width: 320px; padding: 16px; background: #fff; }
 
@@ -131,4 +125,134 @@ input.ssmptms-date-picker {
 
 .ssmptms-start-scheduler:not(.started)  {
     cursor: pointer;
+}
+
+.ssmptms-row-actions {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.ssmptms-action-disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.ssmptms-button-text {
+    display: inline-block;
+}
+
+
+.ssmptms-profile-form {
+    max-width: 980px;
+}
+
+.ssmptms-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.ssmptms-profile-card {
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+}
+
+.ssmptms-profile-card h3 {
+    margin: 0 0 8px;
+}
+
+.ssmptms-profile-card .description {
+    margin: 4px 0 0;
+    color: #646970;
+}
+
+.ssmptms-field {
+    margin: 12px 0;
+}
+
+.ssmptms-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.ssmptms-field-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ssmptms-field-row .ssmptms-field {
+    flex: 1 1 240px;
+    margin: 0;
+}
+
+.ssmptms-field--sm {
+    max-width: 160px;
+}
+
+.ssmptms-input {
+    width: 100%;
+    max-width: 100%;
+}
+
+.ssmptms-input--sm {
+    max-width: 140px;
+}
+
+.ssmptms-input--code {
+    font-family: Consolas, Monaco, monospace;
+}
+
+.ssmptms-select {
+    width: 100%;
+    max-width: 280px;
+}
+
+.ssmptms-field--checkbox {
+    margin-top: 8px;
+}
+
+.ssmptms-checkbox {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.ssmptms-checkbox input {
+    margin-top: 2px;
+}
+
+.ssmptms-required {
+    color: #d63638;
+    font-weight: 700;
+}
+
+.ssmptms-password-state.ssmptms-password-set {
+    color: #1e8c3a;
+}
+
+.ssmptms-password-state.ssmptms-password-missing {
+    color: #d63638;
+}
+
+.ssmptms-profile-button-group {
+    margin-top: 16px;
+    align-items: center;
+}
+
+@media (max-width: 782px) {
+    .ssmptms-profile-card {
+        padding: 14px;
+    }
+
+    .ssmptms-select {
+        max-width: 100%;
+    }
 }

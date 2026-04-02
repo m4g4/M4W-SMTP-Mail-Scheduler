@@ -44,7 +44,7 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                             <input type="hidden" name="filter_id" id="filter_id" value="">
                             <table class="form-table">
                                 <tr>
-                                    <th><?php echo esc_html__('Name', Constants::DOMAIN); ?></th>
+                                    <th><?php echo esc_html__('Rule Name', Constants::DOMAIN); ?></th>
                                     <td>
                                         <input type="text" name="name" id="filter_name" class="regular-text" required>
                                     </td>
@@ -106,7 +106,7 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                             </table>
                             <p class="submit">
                                 <button type="submit" class="button button-primary" id="ssmptms-save-filter">
-                                    <?php echo esc_html__('Save Rule', Constants::DOMAIN); ?>
+                                    <span class="ssmptms-button-text"><?php echo esc_html__('Save Rule', Constants::DOMAIN); ?></span>
                                 </button>
                             </p>
                         </form>
@@ -118,7 +118,7 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                 <table class="widefat" id="ssmptms-filters-table">
                     <thead>
                         <tr>
-                            <th><?php echo esc_html__('Name', Constants::DOMAIN); ?></th>
+                            <th><?php echo esc_html__('Rule Name', Constants::DOMAIN); ?></th>
                             <th><?php echo esc_html__('Subject', Constants::DOMAIN); ?></th>
                             <th><?php echo esc_html__('Body', Constants::DOMAIN); ?></th>
                             <th><?php echo esc_html__('Recipient', Constants::DOMAIN); ?></th>
@@ -133,9 +133,9 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                             <?php foreach ($filters as $filter): ?>
                                 <tr data-id="<?php echo esc_attr($filter->id); ?>" data-action="<?php echo esc_attr($filter->action); ?>" data-priority-value="<?php echo esc_attr($filter->priority_value); ?>">
                                     <td><?php echo esc_html($filter->name); ?></td>
-                                    <td><code><?php echo esc_html($filter->search_subject ?? ''); ?></code></td>
-                                    <td><code><?php echo esc_html($filter->search_body ?? ''); ?></code></td>
-                                    <td><code><?php echo esc_html($filter->search_recipient ?? ''); ?></code></td>
+                                    <td><?php echo $filter->search_subject ? '<code>' . esc_html($filter->search_subject) . '</code>' : ''; ?></td>
+                                    <td><?php echo $filter->search_body ? '<code>' . esc_html($filter->search_body) . '</code>' : ''; ?></td>
+                                    <td><?php echo $filter->search_recipient ? '<code>' . esc_html($filter->search_recipient) . '</code>' : ''; ?></td>
                                     <td><?php echo esc_html($actions[$filter->action] ?? $filter->action); ?></td>
                                     <td><?php echo esc_html($filter->priority); ?></td>
                                     <td>
@@ -144,15 +144,23 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                                         </span>
                                     </td>
                                     <td>
-                                        <button type="button" class="button button-small ssmptms-edit-filter" data-id="<?php echo esc_attr($filter->id); ?>">
-                                            <?php echo esc_html__('Edit', Constants::DOMAIN); ?>
-                                        </button>
-                                        <button type="button" class="button button-small ssmptms-toggle-filter" data-id="<?php echo esc_attr($filter->id); ?>">
-                                            <?php echo $filter->is_active ? esc_html__('Disable', Constants::DOMAIN) : esc_html__('Enable', Constants::DOMAIN); ?>
-                                        </button>
-                                        <button type="button" class="button button-small button-link-delete ssmptms-delete-filter" data-id="<?php echo esc_attr($filter->id); ?>">
-                                            <?php echo esc_html__('Delete', Constants::DOMAIN); ?>
-                                        </button>
+                                        <div class="row-actions ssmptms-row-actions">
+                                            <span class="edit">
+                                                <a href="#" class="ssmptms-edit-filter" data-id="<?php echo esc_attr($filter->id); ?>">
+                                                    <?php echo esc_html__('Edit', Constants::DOMAIN); ?>
+                                                </a>
+                                            </span> |
+                                            <span class="toggle">
+                                                <a href="#" class="ssmptms-toggle-filter" data-id="<?php echo esc_attr($filter->id); ?>">
+                                                    <?php echo $filter->is_active ? esc_html__('Disable', Constants::DOMAIN) : esc_html__('Enable', Constants::DOMAIN); ?>
+                                                </a>
+                                            </span> |
+                                            <span class="delete">
+                                                <a href="#" class="ssmptms-delete-filter button-link-delete" data-id="<?php echo esc_attr($filter->id); ?>">
+                                                    <?php echo esc_html__('Delete', Constants::DOMAIN); ?>
+                                                </a>
+                                            </span>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -201,129 +209,6 @@ if (!class_exists(__NAMESPACE__ . '\\Filters_Settings', false)) {
                 .ssmptms-filter-status.active { color: green; font-weight: bold; }
                 .ssmptms-filter-status.inactive { color: red; }
             </style>
-            <script>
-            jQuery(document).ready(function($) {
-                var modal = $('#ssmptms-filter-modal');
-                var closeBtn = modal.find('.ssmptms-close');
-                var form = $('#ssmptms-filter-form');
-
-                $('#filter_action').on('change', function() {
-                    if ($(this).val() === 'set_priority') {
-                        $('#filter_priority_row').show();
-                    } else {
-                        $('#filter_priority_row').hide();
-                    }
-                });
-
-                $('#ssmptms-add-filter').on('click', function() {
-                    $('#ssmptms-filter-modal-title').text('<?php echo esc_js(__('Add Filter Rule', Constants::DOMAIN)); ?>');
-                    form[0].reset();
-                    $('#filter_id').val('');
-                    $('#filter_is_active').prop('checked', true);
-                    $('#filter_priority_row').hide();
-                    modal.show();
-                });
-
-                $(document).on('click', '.ssmptms-edit-filter', function() {
-                    var id = $(this).data('id');
-                    var row = $(this).closest('tr');
-                    
-                    $('#ssmptms-filter-modal-title').text('<?php echo esc_js(__('Edit Filter Rule', Constants::DOMAIN)); ?>');
-                    $('#filter_id').val(id);
-                    $('#filter_name').val(row.children('td:eq(0)').text());
-                    $('#filter_search_subject').val(row.children('td:eq(1)').find('code').text());
-                    $('#filter_search_body').val(row.children('td:eq(2)').find('code').text());
-                    $('#filter_search_recipient').val(row.children('td:eq(3)').find('code').text());
-                    $('#filter_priority').val(row.children('td:eq(5)').text());
-                    
-                    var actionValue = row.data('action');
-                    if (actionValue) {
-                        $('#filter_action').val(actionValue);
-                    }
-                    var priorityValue = row.data('priorityValue');
-                    if (typeof priorityValue !== 'undefined') {
-                        $('#filter_priority_value').val(priorityValue);
-                    }
-                    
-                    if ($('#filter_action').val() === 'set_priority') {
-                        $('#filter_priority_row').show();
-                    } else {
-                        $('#filter_priority_row').hide();
-                    }
-                    
-                    var isActive = row.find('.ssmptms-filter-status').hasClass('active');
-                    $('#filter_is_active').prop('checked', isActive);
-                    
-                    modal.show();
-                });
-
-                closeBtn.on('click', function() {
-                    modal.hide();
-                });
-
-                $(window).on('click', function(e) {
-                    if (e.target === modal[0]) {
-                        modal.hide();
-                    }
-                });
-
-                form.on('submit', function(e) {
-                    e.preventDefault();
-                    
-                    var formData = {
-                        action: 'ssmptms_filter_save',
-                        ajax_nonce: '<?php echo wp_create_nonce('ssmptms-filter-save'); ?>',
-                        filter_id: $('#filter_id').val(),
-                        name: $('#filter_name').val(),
-                        search_subject: $('#filter_search_subject').val(),
-                        search_body: $('#filter_search_body').val(),
-                        search_recipient: $('#filter_search_recipient').val(),
-                        filter_action: $('#filter_action').val(),
-                        priority_value: $('#filter_priority_value').val(),
-                        priority: $('#filter_priority').val(),
-                        is_active: $('#filter_is_active').prop('checked') ? 1 : 0
-                    };
-
-                    $.post(ajaxurl, formData, function(response) {
-                        if (response.success) {
-                            location.reload();
-                        } else {
-                            alert(response.data.message || 'Error saving filter');
-                        }
-                    });
-                });
-
-                $(document).on('click', '.ssmptms-toggle-filter', function() {
-                    var id = $(this).data('id');
-                    if (!confirm('<?php echo esc_js(__('Are you sure you want to toggle this filter?', Constants::DOMAIN)); ?>')) return;
-
-                    $.post(ajaxurl, {
-                        action: 'ssmptms_filter_toggle',
-                        ajax_nonce: '<?php echo wp_create_nonce('ssmptms-filter-toggle'); ?>',
-                        filter_id: id
-                    }, function(response) {
-                        if (response.success) {
-                            location.reload();
-                        }
-                    });
-                });
-
-                $(document).on('click', '.ssmptms-delete-filter', function() {
-                    var id = $(this).data('id');
-                    if (!confirm('<?php echo esc_js(__('Are you sure you want to delete this filter rule?', Constants::DOMAIN)); ?>')) return;
-
-                    $.post(ajaxurl, {
-                        action: 'ssmptms_filter_delete',
-                        ajax_nonce: '<?php echo wp_create_nonce('ssmptms-filter-delete'); ?>',
-                        filter_id: id
-                    }, function(response) {
-                        if (response.success) {
-                            location.reload();
-                        }
-                    });
-                });
-            });
-            </script>
             <?php
         }
 

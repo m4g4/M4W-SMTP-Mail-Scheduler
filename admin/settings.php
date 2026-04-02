@@ -31,15 +31,41 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
 		    	'ssmptms-admin-js',
 		    	plugins_url('js/admin.js', __FILE__),
 		    	array('jquery'),
-				Constants::PLUGIN_VERSION
+				Constants::PLUGIN_VERSION,
+                true
+		    );
+
+            wp_enqueue_script(
+		    	'ssmptms-utils-js',
+		    	plugins_url('js/utils.js', __FILE__),
+		    	array('jquery'),
+				Constants::PLUGIN_VERSION,
+                true
 		    );
 
             wp_enqueue_script(
 		    	'ssmptms-profile-page-js',
 		    	plugins_url('js/profile_page.js', __FILE__),
-		    	array('jquery'),
-				Constants::PLUGIN_VERSION
+		    	array('jquery', 'ssmptms-utils-js'),
+				Constants::PLUGIN_VERSION,
+                true
 		    );
+
+            wp_enqueue_script(
+		    	'ssmptms-filters-page-js',
+		    	plugins_url('js/filters_page.js', __FILE__),
+		    	array('jquery', 'ssmptms-utils-js'),
+				Constants::PLUGIN_VERSION,
+                true
+		    );
+
+            wp_localize_script(
+                'ssmptms-profile-page-js',
+                'ssmptms_profile_page',
+                array(
+                    'text_domain' => Constants::DOMAIN,
+                )
+            );
 
             wp_localize_script( 
                 'ssmptms-admin-js',
@@ -47,12 +73,27 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
                 array(
                     'ajax_url'       => admin_url( 'admin-ajax.php' ),
                     'start_action'   => 'ssmptms-start',
-                    'start_text'     => __( 'Start', Constants::DOMAIN ),
-                    'started_text'   => __( 'Started', Constants::DOMAIN ),
-                    'starting_text'  => __( 'Starting', Constants::DOMAIN ),
+                    'text_domain'    => Constants::DOMAIN,
                     'ajax_nonce'     => wp_create_nonce( 'ssmptms-start' ),
                 )
             );
+
+            wp_localize_script(
+                'ssmptms-filters-page-js',
+                'ssmptms_filters_page',
+                array(
+                    'text_domain' => Constants::DOMAIN,
+                    'nonces' => array(
+                        'save'   => wp_create_nonce('ssmptms-filter-save'),
+                        'toggle' => wp_create_nonce('ssmptms-filter-toggle'),
+                        'delete' => wp_create_nonce('ssmptms-filter-delete'),
+                    ),
+                )
+            );
+
+            wp_set_script_translations('ssmptms-admin-js', Constants::DOMAIN, SSMPTMS_PLUGIN_LANG_PATH);
+            wp_set_script_translations('ssmptms-filters-page-js', Constants::DOMAIN, SSMPTMS_PLUGIN_LANG_PATH);
+            wp_set_script_translations('ssmptms-profile-page-js', Constants::DOMAIN, SSMPTMS_PLUGIN_LANG_PATH);
         }
 
         public function register_menus() {
