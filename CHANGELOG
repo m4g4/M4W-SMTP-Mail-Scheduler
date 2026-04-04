@@ -1,3 +1,7 @@
+## [1.10.1] - 2026-04-02
+
+- Wordpress admin notices displayed next to the main headline on the settings page bugfix.
+
 ## [1.10.0] - 2026-04-02
 
 - Added "Filtered" status for emails that match filter rules set to "Do Not Send" action.

@@ -118,10 +118,10 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
         public function settings_page() {
             $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general';
             ?>
-            <div class="wrap">
+    <div class="ssmptms-headline-wrap">
                 <div class="ssmptms-headline-wrapper">
                     <div class="ssmptms-headline">
-                        <h1><?php echo __('WO SMTP Mail Scheduler', Constants::DOMAIN); ?></h1>
+                        <h1><?php echo __('M4W SMTP Mail Scheduler', Constants::DOMAIN); ?></h1>
                         <span class="ssmptms-tooltip-icon">?</span>
                         <span class="ssmptms-tooltip-text">
                             <?php echo __('This plugin intercepts all emails sent using WordPress’s wp_mail() function and processes them according to the configured rules (scheduling, sending, logging, status tracking, etc.).<br/>Other methods of sending emails in WordPress are not affected and bypass the plugin completely.', Constants::DOMAIN); ?>

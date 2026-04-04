@@ -247,6 +247,19 @@ input.ssmptms-date-picker {
     align-items: center;
 }
 
+.ssmptms-headline-wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.ssmptms-headline-wrap h1 {
+    font-size: 23px;
+    font-weight: 400;
+    margin: 0;
+    padding: 9px 0 4px;
+    line-height: 1.3;
+}
+
 @media (max-width: 782px) {
     .ssmptms-profile-card {
         padding: 14px;
