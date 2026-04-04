@@ -122,7 +122,7 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
             // Do not remove it.
             ?>
             <div class="wrap"><h1></h1></div>
-    <div class="ssmptms-headline-wrap">
+            <div class="ssmptms-headline-wrap">
                 <div class="ssmptms-headline-wrapper">
                     <div class="ssmptms-headline">
                         <h1><?php echo __('M4W SMTP Mail Scheduler', Constants::DOMAIN); ?></h1>
