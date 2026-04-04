@@ -117,7 +117,11 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
 
         public function settings_page() {
             $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general';
+
+            // The following div with class "wrap" is required for WordPress admin pages to apply default styling and display admin notices.
+            // Do not remove it.
             ?>
+            <div class="wrap"><h1></h1></div>
     <div class="ssmptms-headline-wrap">
                 <div class="ssmptms-headline-wrapper">
                     <div class="ssmptms-headline">
