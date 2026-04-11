@@ -2,6 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-right: 20px;
 }
 
 .ssmptms-headline { position: relative; display: inline-flex; align-items: center; }
@@ -37,11 +38,37 @@
 .ssmptms-profile-button-group {  display: flex;  gap: 12px; }
 .ssmptms-profile-button-group p { margin: 0; padding: 0;}
 
-.ssmptms-status-bar {max-width: 320px; padding: 16px; background: #fff; }
+.ssmptms-status-bar {
+    width: 320px; 
+    min-height: 46px; 
+    padding: 16px; 
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+.ssmptms-status-bar.not-initialized { display: none;}
 
 .ssmptms-status-bar-running     { color:green; font-weight:bold; }
 .ssmptms-status-bar-not-running { color:red;   font-weight:bold; }
 .ssmptms-status-bar-idle        { color:#999;  font-weight:bold; }
+
+.ssmptms-status-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ccc;
+    border-top-color: #2271b1;
+    border-radius: 50%;
+    animation: ssmptms-spin 0.8s linear infinite;
+    vertical-align: middle;
+}
+
+@keyframes ssmptms-spin {
+    to { transform: rotate(360deg); }
+}
 
 .ssmptms-mail-charts_container { display: flex; gap: 20px; flex-direction: column; }
 .ssmptms-mail-charts { display: flex; gap: 20px; flex-wrap: wrap; }

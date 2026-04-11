@@ -75,6 +75,7 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
                     'start_action'   => 'ssmptms-start',
                     'text_domain'    => Constants::DOMAIN,
                     'ajax_nonce'     => wp_create_nonce( 'ssmptms-start' ),
+                    'system_status_nonce' => wp_create_nonce( 'ssmptms-get-system-status' ),
                 )
             );
 

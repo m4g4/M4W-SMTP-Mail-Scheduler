@@ -136,67 +136,75 @@ function get_profile_by_mail($from_email) {
     return null;
 }
 
-function print_system_status() {
+function get_system_status_data(): array {
     $disable_plugin = get_option(Constants::DISABLE, false);
     $enable_scheduler = get_option(Constants::ENABLE_SCHEDULER, true);
-    
+
     if ($disable_plugin) {
-        echo "<div class='ssmptms-status-bar'>";
-        echo '<span class="ssmptms-status-bar-disabled">🛑 ' . esc_html__('Disabled', Constants::DOMAIN) . '</span>';
-        echo '<p class="description">' . esc_html__('Email processing is turned off. Emails sent through wp_mail() are not handled by the plugin.', Constants::DOMAIN) . '</p>';
-        echo '</div>';
-        return;
+        return array(
+            'status' => 'disabled',
+            'label' => __('Disabled', Constants::DOMAIN),
+            'description' => __('Email processing is turned off. Emails sent through wp_mail() are not handled by the plugin.', Constants::DOMAIN),
+        );
     }
 
     if (!$enable_scheduler) {
-        echo "<div class='ssmptms-status-bar'>";
-        echo '<span class="ssmptms-status-bar-disabled">⏩ ' . esc_html__('Scheduler Disabled', Constants::DOMAIN) . '</span>';
-        echo '<p class="description">' . esc_html__('New emails are sent immediately without queuing. Previously queued emails will still be sent by the scheduler.', Constants::DOMAIN) . '</p>';
-        echo '</div>';
-        return;
+        return array(
+            'status' => 'scheduler_disabled',
+            'label' => __('Scheduler Disabled', Constants::DOMAIN),
+            'description' => __('New emails are sent immediately without queuing. Previously queued emails will still be sent by the scheduler.', Constants::DOMAIN),
+        );
     }
 
     $next = wp_next_scheduled(Constants::SCHEDULER_EVENT_NAME);
     $queued_emails = Email_Queue::get_instance()->get_email_entry_count_for_sending();
 
-    echo "<div class='ssmptms-status-bar'>";
-
     if ($queued_emails > 0) {
         if ($next) {
             $rate = (int) get_option(Constants::EMAILS_PER_UNIT, 0);
             $unit = get_option(Constants::EMAILS_UNIT, 'minute');
-            $current_queue_count  = (int) get_option(Constants::CURRENT_QUEUE_COUNT,$queued_emails);
+            $current_queue_count = (int) get_option(Constants::CURRENT_QUEUE_COUNT, $queued_emails);
             $sent = $current_queue_count - $queued_emails;
-
             $progress = min(100, ($sent / $current_queue_count) * 100);
 
             $eta_timestamp = calculate_eta($queued_emails, $rate, $unit);
             $eta_human = date_i18n(get_option('time_format'), $eta_timestamp);
-
             $duration = format_duration($eta_timestamp - time());
 
-            echo '<span class="ssmptms-status-bar-running">✅ ' . esc_html__('Sending in progress', Constants::DOMAIN) . '</span>';
-            progress_bar($progress);
-            echo '<p class="description">'
-                . sprintf(
-                    esc_html__('%1$d emails queued • ETA %2$s (%3$s)', Constants::DOMAIN),
-                    $queued_emails,
-                    esc_html($eta_human),
-                    esc_html($duration)
-                )
-                . '</p>';
+            return array(
+                'status' => 'running',
+                'label' => __('Sending in progress', Constants::DOMAIN),
+                'progress' => $progress,
+                'queued' => $queued_emails,
+                'eta' => $eta_human,
+                'duration' => $duration,
+            );
         } else {
-            echo '<span class="ssmptms-status-bar-not-running">🚫 ' . esc_html__('Not running!', Constants::DOMAIN) . '</span>';
-            echo ' <a class="ssmptms-start-scheduler">▶️ ' . esc_html__('Start', Constants::DOMAIN) . '</a>';
-            echo '<p class="description">' . esc_html__('There was an error activating the scheduler. Try reactivating the plugin.', Constants::DOMAIN) . '</p>';
+            return array(
+                'status' => 'not_running',
+                'label' => __('Not running!', Constants::DOMAIN),
+                'description' => __('There was an error activating the scheduler. Try reactivating the plugin.', Constants::DOMAIN),
+            );
         }
-    } else {
-        echo '<span class="ssmptms-status-bar-idle">⏸ ' . esc_html__('Idle', Constants::DOMAIN) . '</span>';
-        echo '<p class="description">' . esc_html__('No emails scheduled for sending.', Constants::DOMAIN) . '</p>';
     }
 
-    echo "</div>";
+    return array(
+        'status' => 'idle',
+        'label' => __('Idle', Constants::DOMAIN),
+        'description' => __('No emails scheduled for sending.', Constants::DOMAIN),
+    );
 }
+
+function print_system_status(): void {
+    echo "<div class='ssmptms-status-bar not-initialized'></div>";
+}
+
+add_action('wp_ajax_ssmptms-get-system-status', function() {
+    check_ajax_referer('ssmptms-get-system-status', 'ajax_nonce');
+    $data = get_system_status_data();
+    wp_send_json_success($data);
+    wp_die();
+});
 
 function calculate_eta(int $queued, float $rate, string $unit): int {
     if ($rate <= 0) {
@@ -230,10 +238,4 @@ function format_duration(float $seconds): string {
         $h = floor(($seconds % 86400) / 3600);
         return sprintf('%dd %dh', $d, $h);
     }
-}
-
-function progress_bar($progress) {
-    echo '<div class="ssmptms-progress-bar">';
-    echo '<div class="ssmptms-progress" style="width:' . esc_attr($progress) . '%;"></div>';
-    echo '</div>';
 }
