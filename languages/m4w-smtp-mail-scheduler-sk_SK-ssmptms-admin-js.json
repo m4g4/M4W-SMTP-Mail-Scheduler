@@ -1,5 +1,5 @@
 {
-  "translation-revision-date": "2026-04-02 13:00:00+0000",
+  "translation-revision-date": "2026-04-11 13:00:00+0000",
   "generator": "Manual JSON Template",
   "domain": "m4w-smtp-mail-scheduler",
   "locale_data": {
@@ -7,10 +7,13 @@
       "": {
         "domain": "m4w-smtp-mail-scheduler",
         "plural-forms": "nplurals=2; plural=(n != 1);",
-        "lang": "fr_FR"
+        "lang": "sk_SK"
       },
       "Starting": ["Spúšťanie"],
-      "Started": ["Spustené"]
+      "Started": ["Spustené"],
+      "Loading...": ["Načítavanie..."],
+      "emails queued": ["emailov v poradí"],
+      "Start": ["Štart"]
     }
   }
 }

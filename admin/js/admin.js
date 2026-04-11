@@ -39,10 +39,10 @@ jQuery(function ($) {
             html += '<div class="ssmptms-progress" style="width:' + data.progress + '%;"></div>';
             html += '</div>';
             html += '<p class="description">'
-                + data.queued + ' emails queued • ETA ' + data.eta + ' (' + data.duration + ')'
+                + data.queued + ' ' + __('emails queued', textDomain) + ' • ETA ' + data.eta + ' (' + data.duration + ')'
                 + '</p>';
         } else if (data.status === 'not_running') {
-            html += ' <a class="ssmptms-start-scheduler">' + __('▶️ Start', textDomain) + '</a>';
+            html += ' <a class="ssmptms-start-scheduler">▶️ ' + __('Start', textDomain) + '</a>';
             html += '<p class="description">' + data.description + '</p>';
         } else {
             html += '<p class="description">' + (data.description || '') + '</p>';
