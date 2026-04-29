@@ -257,24 +257,37 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
             if ($filter_result !== null) {
                 
                 if ($filter_result['action'] === 'do_not_send') {
-                    $this->mail_enqueue_email($parsed_recipients, $subject, $message, $headers, $attachments, false, null, false, 'filtered');
-                    return true;
-                
-                } elseif ($filter_result['action'] === 'bypass' || $filter_result['action'] === 'set_priority') {
-                    $priority_override = ($filter_result['action'] === 'set_priority' && isset($filter_result['filter']->priority_value)) 
-                        ? intval($filter_result['filter']->priority_value) 
+                    return $this->mail_enqueue_email($parsed_recipients, $subject, $message, $headers, $attachments, false, null, false, 'filtered')
+                        ? true
                         : null;
-                    
-                        $this->mail_enqueue_email($parsed_recipients, $subject, $message, $headers, $attachments, false, $priority_override);
-                    return true;
+                
+                } elseif ($filter_result['action'] === 'bypass') {
+                    return $this->mail_enqueue_email($parsed_recipients, $subject, $message, $headers, $attachments, false, null, true)
+                        ? true
+                        : false;
+                } elseif ($filter_result['action'] === 'set_priority') {
+                    $priority_override = isset($filter_result['filter']->priority_value)
+                        ? intval($filter_result['filter']->priority_value)
+                        : null;
+
+                    $queued_result = $this->mail_enqueue_email($parsed_recipients, $subject, $message, $headers, $attachments, false, $priority_override);
+                    if ($queued_result) {
+                        $current_queue_count = (int) get_option(Constants::CURRENT_QUEUE_COUNT, 0);
+                        update_option(Constants::CURRENT_QUEUE_COUNT, $current_queue_count + 1);
+
+                        schedule_cron_event();
+                    }
+
+                    return $queued_result ? true : null;
                 }
             }
 
             // If scheduler is disabled, send immediately but still log to database
             if (!$enable_scheduler) {
                 // Queue and send immediately
-                $this->mail_enqueue_email($parsed_recipients, $subject, $message, $headers, $attachments, false, null, true);
-                return true;
+                return $this->mail_enqueue_email($parsed_recipients, $subject, $message, $headers, $attachments, false, null, true)
+                    ? true
+                    : false;
             }
 
             // Queue
@@ -320,8 +333,10 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
                 if ($send_immediately) {
                     $email = Email_Queue::get_instance()->get_email_by_id($inserted);
                     if ($email) {
-                        $this->send_email($email);
+                        return $this->send_email($email);
                     }
+
+                    return false;
                 }
 
                 return true;
@@ -536,6 +551,9 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
          */
         private function parseAddress($address) {
             $address = (string)$address;
+            $email = '';
+            $name = '';
+
             if (preg_match('/(.*)<(.+)>/', trim($address), $matches)) {
                 $name  = trim(str_replace(['"', "'"], '', $matches[1]));
                 $email = sanitize_email(trim($matches[2]));
@@ -560,17 +578,25 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
          * @return array
          */
         private function parse_recipients($to) {
-            $recipients_array = (array) $to;
             $parsed_recipients = array();
-            foreach ($recipients_array as $r) {
+
+            foreach ((array) $to as $r) {
+                if (is_array($r)) {
+                    $parsed_recipients = array_merge($parsed_recipients, $this->parse_recipients($r));
+                    continue;
+                }
+
                 if (is_string($r)) {
-                    list($email, $name) = $this->parseAddress($r);
-                    if (is_email($email)) {
-                        $parsed_recipients[] = $email;
+                    foreach (preg_split('/[,;]+/', $r) as $recipient) {
+                        list($email, $name) = $this->parseAddress($recipient);
+                        if (is_email($email)) {
+                            $parsed_recipients[] = $email;
+                        }
                     }
                 }
             }
-            return $parsed_recipients;
+
+            return array_values(array_unique($parsed_recipients));
         }
 
         /**

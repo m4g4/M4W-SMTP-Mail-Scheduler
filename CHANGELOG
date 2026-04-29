@@ -1,3 +1,11 @@
+## [1.10.3] - 2026-04-29
+
+- Fixed filter action handling so "Bypass Scheduling" sends matching emails immediately.
+- Fixed "Set Scheduler Priority" filter action to schedule queued emails after applying the priority override.
+- Improved immediate-send return values so SMTP failures are reported instead of always returning success.
+- Improved recipient parsing for arrays and comma/semicolon-separated recipient strings.
+- Hardened address parsing to avoid undefined values for malformed addresses.
+
 ## [1.10.2] - 2026-04-11
 
 - Added AJAX polling for the system status bar on the settings page (refreshes every 30 seconds).
