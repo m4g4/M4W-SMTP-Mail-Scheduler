@@ -330,10 +330,8 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
             $formats = array('%s', '%s', '%s');
 
             if (get_option(Constants::CLEAN_SENT_EMAIL_CONTENT, false)) {
-                $data['subject']     = '';
                 $data['message']     = '';
                 $data['headers']     = null;
-                $formats[] = '%s';
                 $formats[] = '%s';
                 $formats[] = '%s';
             }
@@ -463,11 +461,10 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
 
             $updated = $wpdb->query(
                 "UPDATE {$this->table_name}
-                 SET subject = '',
-                     message = '',
+                 SET message = '',
                      headers = NULL
                  WHERE status = 'sent'
-                   AND (subject != '' OR message != '' OR headers IS NOT NULL)"
+                   AND (message != '' OR headers IS NOT NULL)"
             );
 
             if ($updated !== false) {

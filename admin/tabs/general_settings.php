@@ -279,7 +279,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\General_Settings', false ) ) {
             <label>
                 <input type="checkbox" name="<?php echo esc_attr(Constants::CLEAN_SENT_EMAIL_CONTENT); ?>"
                        value="1" <?php checked($value, true); ?> />
-                <?php _e('When enabled, the subject, message, and headers of sent emails will be cleared from the database to save space.', Constants::DOMAIN); ?>
+                <?php _e('When enabled, the message and headers of sent emails will be cleared from the database to save space.', Constants::DOMAIN); ?>
             </label>
             <?php
         }
