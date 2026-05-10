@@ -94,6 +94,23 @@ if ( ! class_exists( __NAMESPACE__ . '\\General_Settings', false ) ) {
                 Constants::SETTINGS_SECTION_BASIC,
                 Constants::SECTION_BASIC
             );
+
+            register_setting(
+                Constants::GENERAL_OPTION_GROUP,
+                Constants::CLEAN_SENT_EMAIL_CONTENT,
+                [
+                    'type' => 'boolean',
+                    'sanitize_callback' => fn($value) => (bool) $value,
+                    'default' => false
+                ]
+            );
+            add_settings_field(
+                'clean_sent_email_content',
+                __('Clean sent email content', Constants::DOMAIN),
+                [$this, 'clean_sent_email_content_callback'],
+                Constants::SETTINGS_SECTION_BASIC,
+                Constants::SECTION_BASIC
+            );
         }
 
         private function register_scheduler_settings() {
@@ -121,6 +138,24 @@ if ( ! class_exists( __NAMESPACE__ . '\\General_Settings', false ) ) {
                 'emails_per_unit',
                 __( 'Emails per unit', Constants::DOMAIN ),
                 [ $this, 'emails_per_unit_callback' ],
+                Constants::SETTINGS_SECTION_SCHEDULER,
+                Constants::SECTION_SCHEDULER
+            );
+
+            register_setting(
+                Constants::GENERAL_OPTION_GROUP,
+                Constants::EMAILS_LOG_MAX_ROWS,
+                [
+                    'type'              => 'integer',
+                    'sanitize_callback' => [ $this, 'sanitize_emails_log_max_rows' ],
+                    'default'           => 100000,
+                ]
+            );
+
+            add_settings_field(
+                'emails_log_max_rows',
+                __( 'Max log rows', Constants::DOMAIN ),
+                [ $this, 'emails_log_max_rows_callback' ],
                 Constants::SETTINGS_SECTION_SCHEDULER,
                 Constants::SECTION_SCHEDULER
             );
@@ -188,6 +223,34 @@ if ( ! class_exists( __NAMESPACE__ . '\\General_Settings', false ) ) {
             return $value;
         }
 
+        /**
+         * Max log rows field.
+         */
+        public function emails_log_max_rows_callback(): void {
+            $value = (int) get_option( Constants::EMAILS_LOG_MAX_ROWS, 100000 );
+            ?>
+            <input type="number" name="<?php echo esc_attr( Constants::EMAILS_LOG_MAX_ROWS ); ?>" value="<?php echo esc_attr( $value ); ?>" min="100" step="100" />
+            <p class="description"><?php esc_html_e( 'Maximum number of email log rows to keep in the database. Older sent/failed emails will be automatically deleted when this limit is exceeded.', Constants::DOMAIN ); ?></p>
+            <?php
+        }
+
+        /**
+         * Sanitize max log rows.
+         */
+        public function sanitize_emails_log_max_rows( $value ): int {
+            $value = absint( $value );
+            if ( $value < 100 ) {
+                add_settings_error(
+                    Constants::EMAILS_LOG_MAX_ROWS,
+                    'invalid_emails_log_max_rows',
+                    __( 'Max log rows must be at least 100.', Constants::DOMAIN ),
+                    'error'
+                );
+                return (int) get_option( Constants::EMAILS_LOG_MAX_ROWS, 100000 );
+            }
+            return $value;
+        }
+
         public function disable_callback() {
             $value = get_option(Constants::DISABLE, false);
             ?>
@@ -206,6 +269,17 @@ if ( ! class_exists( __NAMESPACE__ . '\\General_Settings', false ) ) {
                 <input type="checkbox" name="<?php echo esc_attr(Constants::ENABLE_SCHEDULER); ?>"
                        value="1" <?php checked($value, true); ?> />
                 <?php _e('When enabled, emails will be queued and sent according to the scheduler settings. When disabled, emails will be sent immediately.', Constants::DOMAIN); ?>
+            </label>
+            <?php
+        }
+
+        public function clean_sent_email_content_callback() {
+            $value = get_option(Constants::CLEAN_SENT_EMAIL_CONTENT, false);
+            ?>
+            <label>
+                <input type="checkbox" name="<?php echo esc_attr(Constants::CLEAN_SENT_EMAIL_CONTENT); ?>"
+                       value="1" <?php checked($value, true); ?> />
+                <?php _e('When enabled, the subject, message, and headers of sent emails will be cleared from the database to save space.', Constants::DOMAIN); ?>
             </label>
             <?php
         }

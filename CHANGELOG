@@ -1,3 +1,9 @@
+## [1.11.0] - 2026-05-10
+
+- Added configurable email log row limit (max rows stored in the database).
+- Added option to automatically clear subject, message, and headers of sent emails to save database space.
+- Added database migration to clean content of already-sent emails on existing installations.
+
 ## [1.10.3] - 2026-04-29
 
 - Fixed filter action handling so "Bypass Scheduling" sends matching emails immediately.

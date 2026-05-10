@@ -381,7 +381,7 @@ if (!class_exists(__NAMESPACE__ . '\\Mailer', false)) {
         }
 
         private function remove_exceeding_emails() {
-            $limit = (int) Constants::EMAILS_LOG_MAX_ROWS;
+            $limit = (int) get_option(Constants::EMAILS_LOG_MAX_ROWS, 100000);
 
             $total = Email_Queue::get_instance()->get_total_emails();
 

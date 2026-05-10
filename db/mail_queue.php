@@ -26,6 +26,7 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
                 // FIX
                 self::$instance->db_update_fix_created_at();
                 self::$instance->db_update_add_filtered_status();
+                self::$instance->db_update_clean_sent_content();
 		    }
 
 		    return self::$instance;
@@ -320,15 +321,28 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
         public function update_email_sent($email_id, $last_attempt_at) {
             global $wpdb;
 
+            $data = array(
+                'status'          => 'sent',
+                'last_attempt_at' => $last_attempt_at,
+                'error_message'   => null,
+            );
+
+            $formats = array('%s', '%s', '%s');
+
+            if (get_option(Constants::CLEAN_SENT_EMAIL_CONTENT, false)) {
+                $data['subject']     = '';
+                $data['message']     = '';
+                $data['headers']     = null;
+                $formats[] = '%s';
+                $formats[] = '%s';
+                $formats[] = '%s';
+            }
+
             return $wpdb->update(
                 $this->table_name,
-                array(
-                    'status'          => 'sent',
-                    'last_attempt_at' => $last_attempt_at,
-                    'error_message'   => null,
-                ),
+                $data,
                 array('email_id' => $email_id),
-                array('%s', '%s', '%s'),
+                $formats,
                 array('%d')
             );
         }
@@ -434,6 +448,33 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
             if ($updated !== false) {
                 update_option('ssmptms_status_filtered_added', 'yes');
             }
+        }
+
+        public function db_update_clean_sent_content() {
+            global $wpdb;
+
+            if (get_option('ssmptms_sent_content_cleaned') === 'yes') {
+                return;
+            }
+
+            if (!$this->table_exists()) {
+                return;
+            }
+
+            $updated = $wpdb->query(
+                "UPDATE {$this->table_name}
+                 SET subject = '',
+                     message = '',
+                     headers = NULL
+                 WHERE status = 'sent'
+                   AND (subject != '' OR message != '' OR headers IS NOT NULL)"
+            );
+
+            if ($updated !== false) {
+                error_log("M4W SMTP Mail Scheduler: Cleaned content of {$updated} sent emails");
+            }
+
+            update_option('ssmptms_sent_content_cleaned', 'yes');
         }
     }
 }

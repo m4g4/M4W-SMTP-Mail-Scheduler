@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 final class Constants {
 
     // Do not forget to change the header in m4w-smtp-mail-scheduler as well when changing the plugin version.
-    public const PLUGIN_VERSION     = '1.10.3';
+    public const PLUGIN_VERSION     = '1.11.0';
     public const VERSION     = '1.2';
 
     /** Queue table */
@@ -41,7 +41,8 @@ final class Constants {
     public const CURRENT_QUEUE_COUNT     = 'ssmptms_current_queue_count';
 
     // Limits
-    public const EMAILS_LOG_MAX_ROWS = 100000;
+    public const EMAILS_LOG_MAX_ROWS = 'ssmptms_emails_log_max_rows';
+    public const CLEAN_SENT_EMAIL_CONTENT = 'ssmptms_clean_sent_email_content';
 
     public const MAX_EMAIL_RETRIES = 3;
 

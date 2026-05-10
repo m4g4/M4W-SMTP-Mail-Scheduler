@@ -18,5 +18,7 @@ delete_option(Ssmptms\Constants::EMAILS_PER_UNIT);
 delete_option(Ssmptms\Constants::EMAILS_UNIT);
 delete_option(Ssmptms\Constants::DISABLE);
 delete_option(Ssmptms\Constants::ENABLE_SCHEDULER);
+delete_option(Ssmptms\Constants::EMAILS_LOG_MAX_ROWS);
+delete_option(Ssmptms\Constants::CLEAN_SENT_EMAIL_CONTENT);
 
 ?>
