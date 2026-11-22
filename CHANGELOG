@@ -1,4 +1,4 @@
-## [1.13.0] - 2026-11-22
+## [2.0.0] - 2026-11-22
 
 - Fixed scheduler cron timing: renamed the cron recurrence to a plugin-specific schedule, migrate existing events, pull overdue/future events back to the next minute, and avoid losing newly queued emails when the scheduler unschedules itself.
 - Added an atomic, token-based scheduler tick lock so overlapping WordPress cron triggers cannot corrupt pacing state or release another tick's lock.
