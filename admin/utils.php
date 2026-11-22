@@ -163,13 +163,15 @@ function get_system_status_data(): array {
         if ($next) {
             $rate = (int) get_option(Constants::EMAILS_PER_UNIT, 0);
             $unit = get_option(Constants::EMAILS_UNIT, 'minute');
-            $current_queue_count = (int) get_option(Constants::CURRENT_QUEUE_COUNT, $queued_emails);
+            $current_queue_count = max(1, (int) get_option(Constants::CURRENT_QUEUE_COUNT, $queued_emails));
             $sent = $current_queue_count - $queued_emails;
             $progress = min(100, ($sent / $current_queue_count) * 100);
 
             $eta_timestamp = calculate_eta($queued_emails, $rate, $unit);
+            $eta_timestamp = $next > $eta_timestamp ? $next : $eta_timestamp;
             $eta_human = date_i18n(get_option('time_format'), $eta_timestamp);
-            $duration = format_duration($eta_timestamp - time());
+            $duration = format_duration(max(0, $eta_timestamp - time()));
+            $next_check = $next > time() ? format_duration($next - time()) : __('now', Constants::DOMAIN);
 
             return array(
                 'status' => 'running',
@@ -178,6 +180,7 @@ function get_system_status_data(): array {
                 'queued' => $queued_emails,
                 'eta' => $eta_human,
                 'duration' => $duration,
+                'next_check' => $next_check,
             );
         } else {
             return array(
@@ -201,9 +204,24 @@ function print_system_status(): void {
 
 add_action('wp_ajax_ssmptms-get-system-status', function() {
     check_ajax_referer('ssmptms-get-system-status', 'ajax_nonce');
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Permission denied'], 403);
+    }
+
     $data = get_system_status_data();
+
+    if (!empty($_POST['include_log_table'])) {
+        check_ajax_referer('ssmptms-get-log-table', 'log_table_nonce');
+
+        $query_args = isset($_POST['log_query_args']) && is_array($_POST['log_query_args'])
+            ? wp_unslash($_POST['log_query_args'])
+            : [];
+
+        $data['log_table'] = Log_Settings::get_instance()->render_log_table_html($query_args, false);
+    }
+
     wp_send_json_success($data);
-    wp_die();
 });
 
 function calculate_eta(int $queued, float $rate, string $unit): int {

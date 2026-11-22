@@ -147,30 +147,22 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
             return $wpdb->get_results($query);
         }
 
-        public function get_emails($per_page, $offset, $orderby, $order = 'asc', $status = '', $profile = '', $search = '') {
+        private function get_emails_where($status = '', $profile = '', $search = ''): array {
             global $wpdb;
 
-            $orderby_sql = ($orderby === 'profile_settings')
-                ? "JSON_UNQUOTE(JSON_EXTRACT(profile_settings, '$.label')) $order"
-                : "$orderby $order";
-
-            // Handle filters
             $where_clauses = [];
             $query_params = [];
 
-            // Status filter
-            if ($status && in_array($status, Constants::ALL_STATUSES)) {
+            if ($status && in_array($status, Constants::ALL_STATUSES, true)) {
                 $where_clauses[] = 'status = %s';
                 $query_params[] = $status;
             }
 
-            // Profile filter
             if ($profile) {
                 $where_clauses[] = "JSON_UNQUOTE(JSON_EXTRACT(profile_settings, '$.label')) = %s";
                 $query_params[] = $profile;
             }
 
-            // Build WHERE clause
             $where_sql = '';
             if (!empty($where_clauses)) {
                 $where_sql = 'WHERE ' . implode(' AND ', $where_clauses);
@@ -178,14 +170,41 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
 
             if (!empty($search)) {
                 $like = '%' . $wpdb->esc_like($search) . '%';
-                
-                if (empty($where_sql))
-                    $where_sql = 'WHERE 1=1';
-
-                $where_sql .= $wpdb->prepare(" AND (subject LIKE %s OR recipient_email LIKE %s)", $like, $like);
+                $where_clauses[] = '(subject LIKE %s OR recipient_email LIKE %s)';
+                $query_params[] = $like;
+                $query_params[] = $like;
             }
 
-            // Prepare the main query
+            $where_sql = !empty($where_clauses)
+                ? 'WHERE ' . implode(' AND ', $where_clauses)
+                : '';
+
+            return [$where_sql, $query_params];
+        }
+
+        public function get_emails_count($status = '', $profile = '', $search = ''): int {
+            global $wpdb;
+
+            list($where_sql, $query_params) = $this->get_emails_where($status, $profile, $search);
+
+            $sql = "SELECT COUNT(*) FROM $this->table_name $where_sql";
+
+            if (!empty($query_params)) {
+                $sql = $wpdb->prepare($sql, $query_params);
+            }
+
+            return (int) $wpdb->get_var($sql);
+        }
+
+        public function get_emails($per_page, $offset, $orderby, $order = 'asc', $status = '', $profile = '', $search = '', ?int $total_items = null) {
+            global $wpdb;
+
+            $orderby_sql = ($orderby === 'profile_settings')
+                ? "JSON_UNQUOTE(JSON_EXTRACT(profile_settings, '$.label')) $order"
+                : "$orderby $order";
+
+            list($where_sql, $query_params) = $this->get_emails_where($status, $profile, $search);
+
             $query = "SELECT * FROM $this->table_name $where_sql ORDER BY $orderby_sql LIMIT %d OFFSET %d";
             $query_params[] = $per_page;
             $query_params[] = $offset;
@@ -194,10 +213,9 @@ if (!class_exists(__NAMESPACE__ . '\\Email_Queue', false)) {
                 $wpdb->prepare($query, $query_params)
             );
 
-            // Get total items for pagination (with filters applied)
-            $total_items = (int) $wpdb->get_var(
-                $wpdb->prepare("SELECT COUNT(*) FROM $this->table_name $where_sql", array_slice($query_params, 0, -2))
-            );
+            if ($total_items === null) {
+                $total_items = $this->get_emails_count($status, $profile, $search);
+            }
 
             return [$result, $total_items];
         }

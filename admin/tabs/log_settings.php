@@ -117,20 +117,47 @@ if (!class_exists(__NAMESPACE__ . '\\Log_Settings', false)) {
             exit;
         }
 
+        public function render_log_table_html(array $request_args = [], bool $include_container = true): string {
+            $log_table = new Log_Table($request_args);
+            $log_table->prepare_items();
+
+            $settings_url = admin_url('options-general.php');
+            $original_request_uri = $_SERVER['REQUEST_URI'] ?? '';
+            $request_uri_args = array_merge(
+                ['page' => Constants::SETTINGS_PAGE, 'tab' => 'log'],
+                $request_args
+            );
+            $_SERVER['REQUEST_URI'] = wp_parse_url($settings_url, PHP_URL_PATH)
+                . '?' . http_build_query($request_uri_args);
+
+            ob_start();
+
+            try {
+                if ($include_container) {
+                    echo '<div id="ssmptms-log-table-container" class="ssmptms-log-table-container">';
+                }
+                echo '<form method="get" action="' . esc_url($settings_url) . '">';
+                echo '<input type="hidden" name="page" value="' . Constants::SETTINGS_PAGE . '" />';
+                echo '<input type="hidden" name="tab" value="log" />';
+                $log_table->display();
+                echo '</form>';
+                if ($include_container) {
+                    echo '</div>';
+                }
+            } finally {
+                $_SERVER['REQUEST_URI'] = $original_request_uri;
+            }
+
+            return (string) ob_get_clean();
+        }
+
         public function render_tab() {
             $this->handle_log_actions();
             $this->handle_bulk_actions();
 
-            $log_table = new Log_Table();
-            $log_table->prepare_items();
-
             echo '<div class="wrap">';
             echo '<h2>' . esc_html__('Mail Log', Constants::DOMAIN) . '</h2>';
-            echo '<form method="get">';
-            echo '<input type="hidden" name="page" value="' . Constants::SETTINGS_PAGE . '" />';
-            echo '<input type="hidden" name="tab" value="log" />';
-            $log_table->display();
-            echo '</form>';
+            echo $this->render_log_table_html(wp_unslash($_GET));
             echo '</div>';
         }
     }

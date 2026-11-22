@@ -11,13 +11,30 @@ if (!class_exists('WP_List_Table')) {
 
 class Log_Table extends \WP_List_Table {
     private $per_page = 50;
+    private array $request_args;
 
-    public function __construct() {
+    public function __construct(?array $request_args = null) {
+        $this->request_args = $request_args ?? wp_unslash($_GET);
+
         parent::__construct([
             'singular' => __('Email', Constants::DOMAIN),
             'plural'   => __('Emails', Constants::DOMAIN),
             'ajax'     => false,
         ]);
+    }
+
+    private function get_request_value(string $key): string {
+        return isset($this->request_args[$key]) ? sanitize_text_field((string) $this->request_args[$key]) : '';
+    }
+
+    public function get_pagenum() {
+        $pagenum = absint($this->get_request_value('paged'));
+
+        if (isset($this->_pagination_args['total_pages']) && $pagenum > $this->_pagination_args['total_pages']) {
+            $pagenum = $this->_pagination_args['total_pages'];
+        }
+
+        return max(1, $pagenum);
     }
 
     public function get_columns(): array {
@@ -70,9 +87,9 @@ class Log_Table extends \WP_List_Table {
         }
 
         // Filters
-        $status_filter  = isset($_GET['status_filter']) ? sanitize_text_field($_GET['status_filter']) : '';
-        $profile_filter = isset($_GET['profile_filter']) ? sanitize_text_field($_GET['profile_filter']) : '';
-        $search_query   = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
+        $status_filter  = $this->get_request_value('status_filter');
+        $profile_filter = $this->get_request_value('profile_filter');
+        $search_query   = $this->get_request_value('s');
 
         $statuses = [
             'queued'     => __('Queued', Constants::DOMAIN),
@@ -115,30 +132,38 @@ class Log_Table extends \WP_List_Table {
     public function prepare_items(): void {
         $this->prepare_column_headers();
 
-        $search_query = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
-        $current_page = $this->get_pagenum();
-        $offset       = ($current_page - 1) * $this->per_page;
+        $search_query   = $this->get_request_value('s');
+        $status_filter  = $this->get_request_value('status_filter');
+        $profile_filter = $this->get_request_value('profile_filter');
 
-        $orderby = !empty($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : 'scheduled_at';
-        $order   = !empty($_GET['order']) && in_array(strtolower($_GET['order']), ['asc', 'desc']) ? strtolower($_GET['order']) : 'desc';
+        $orderby = $this->get_request_value('orderby') ?: 'scheduled_at';
+        $allowed_orderby = array_keys($this->get_sortable_columns());
+        $allowed_orderby[] = 'scheduled_at';
 
-        // Status filter
-        $status_filter = isset($_GET['status_filter']) ? sanitize_text_field($_GET['status_filter']) : '';
+        if (!in_array($orderby, $allowed_orderby, true)) {
+            $orderby = 'scheduled_at';
+        }
 
-        // Profile filter
-        $profile_filter = isset($_GET['profile_filter']) ? sanitize_text_field($_GET['profile_filter']) : '';
+        $order = strtolower($this->get_request_value('order'));
+        $order = in_array($order, ['asc', 'desc'], true) ? $order : 'desc';
 
-        $result = Email_Queue::get_instance()->get_emails($this->per_page, $offset, $orderby, $order, $status_filter, $profile_filter, $search_query);
-
-        $total_items = $result[1];
-
-        $this->items = $result[0];
+        $queue       = Email_Queue::get_instance();
+        $total_items = $queue->get_emails_count($status_filter, $profile_filter, $search_query);
+        $total_pages = max(1, (int) ceil($total_items / $this->per_page));
 
         $this->set_pagination_args([
             'total_items' => $total_items,
             'per_page'    => $this->per_page,
-            'total_pages' => ceil($total_items / $this->per_page),
+            'total_pages' => $total_pages,
         ]);
+
+        $current_page = $this->get_pagenum();
+        $this->request_args['paged'] = $current_page;
+        $offset = ($current_page - 1) * $this->per_page;
+
+        $result = $queue->get_emails($this->per_page, $offset, $orderby, $order, $status_filter, $profile_filter, $search_query, $total_items);
+
+        $this->items = $result[0];
     }
 
     public function column_default($item, $column_name) {
@@ -182,6 +207,14 @@ class Log_Table extends \WP_List_Table {
         );
     }
 
+    private function get_action_url(array $args): string {
+        $base = admin_url('options-general.php?page=' . Constants::SETTINGS_PAGE . '&tab=log');
+        $keys = ['s', 'status_filter', 'profile_filter', 'orderby', 'order', 'paged'];
+        $preserve = array_intersect_key($this->request_args, array_flip($keys));
+
+        return add_query_arg(array_merge($preserve, $args), $base);
+    }
+
     public function get_row_actions($item): array {
         $actions = [];
 
@@ -189,7 +222,7 @@ class Log_Table extends \WP_List_Table {
         if ($item->status === 'failed') {
             $actions['retry'] = sprintf(
                 '<a href="%s">%s</a>',
-                esc_url(add_query_arg([
+                esc_url($this->get_action_url([
                     'action'   => 'ssmptms_retry',
                     'email_id' => $item->email_id,
                     '_wpnonce' => wp_create_nonce('ssmptms_retry_' . $item->email_id),
@@ -201,7 +234,7 @@ class Log_Table extends \WP_List_Table {
         // Remove
         $actions['remove'] = sprintf(
             '<a href="%s" style="color:red;">%s</a>',
-            esc_url(add_query_arg([
+            esc_url($this->get_action_url([
                 'action'   => 'ssmptms_remove',
                 'email_id' => $item->email_id,
                 '_wpnonce' => wp_create_nonce('ssmptms_remove_' . $item->email_id),
@@ -213,7 +246,7 @@ class Log_Table extends \WP_List_Table {
         if ($item->status === 'queued') {
             $actions['front'] = sprintf(
                 '<a href="%s">%s</a>',
-                esc_url(add_query_arg([
+                esc_url($this->get_action_url([
                     'action'   => 'ssmptms_front',
                     'email_id' => $item->email_id,
                     '_wpnonce' => wp_create_nonce('ssmptms_front_' . $item->email_id),
@@ -226,7 +259,7 @@ class Log_Table extends \WP_List_Table {
         if ($item->status === 'queued') {
             $actions['send-now'] = sprintf(
                 '<a href="%s">%s</a>',
-                esc_url(add_query_arg([
+                esc_url($this->get_action_url([
                     'action'   => 'ssmptms_send_now',
                     'email_id' => $item->email_id,
                     '_wpnonce' => wp_create_nonce('ssmptms_send_now_' . $item->email_id),

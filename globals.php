@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 final class Constants {
 
     // Do not forget to change the header in m4w-smtp-mail-scheduler as well when changing the plugin version.
-    public const PLUGIN_VERSION     = '1.12.0';
+    public const PLUGIN_VERSION     = '1.13.0';
     public const VERSION     = '1.2';
 
     /** Queue table */
@@ -62,6 +62,10 @@ final class Constants {
 
     // Scheduler
     public const SCHEDULER_EVENT_NAME = 'ssmptms_send_emails_event';
+    public const SCHEDULER_SCHEDULE   = 'ssmptms_every_minute';
+    public const SCHEDULER_INTERVAL   = 60;
+    public const SCHEDULER_LOCK       = 'ssmptms_scheduler_lock';
+    public const SCHEDULER_LOCK_TTL   = 300;
 
     public const ALL_STATUSES = ['queued', 'processing', 'sent', 'failed', 'filtered'];
 

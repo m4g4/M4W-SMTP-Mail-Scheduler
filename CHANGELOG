@@ -1,3 +1,12 @@
+## [1.13.0] - 2026-11-22
+
+- Fixed scheduler cron timing: renamed the cron recurrence to a plugin-specific schedule, migrate existing events, pull overdue/future events back to the next minute, and avoid losing newly queued emails when the scheduler unschedules itself.
+- Added an atomic, token-based scheduler tick lock so overlapping WordPress cron triggers cannot corrupt pacing state or release another tick's lock.
+- System status now shows the next cron check and an ETA that cannot be earlier than the next scheduled check.
+- Email log table now refreshes automatically with the system status polling, including filter, search, sort, and pagination state.
+- Fixed automatic refresh nonce handling and out-of-range page clamping before the email log query.
+- Hardened log table query arguments and row-action URLs.
+
 ## [1.12.0] - 2026-08-02
 
 - Fixed sender override: the plugin now captures the sender resolved by the `wp_mail_from` / `wp_mail_from_name` filters (e.g. configured in WooCommerce email settings) at queue time and stores it as a "From" header. Previously the profile's "From" address/name always won because the filters run after the `pre_wp_mail` interception.

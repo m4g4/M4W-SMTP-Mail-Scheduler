@@ -28,12 +28,12 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
 		    );
 
             wp_enqueue_script(
-		    	'ssmptms-admin-js',
-		    	plugins_url('js/admin.js', __FILE__),
-		    	array('jquery'),
-				Constants::PLUGIN_VERSION,
+                'ssmptms-admin-js',
+                plugins_url('js/admin.js', __FILE__),
+                array('jquery', 'wp-i18n'),
+                Constants::PLUGIN_VERSION,
                 true
-		    );
+            );
 
             wp_enqueue_script(
 		    	'ssmptms-utils-js',
@@ -76,6 +76,8 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
                     'text_domain'    => Constants::DOMAIN,
                     'ajax_nonce'     => wp_create_nonce( 'ssmptms-start' ),
                     'system_status_nonce' => wp_create_nonce( 'ssmptms-get-system-status' ),
+                    'log_table_nonce' => wp_create_nonce( 'ssmptms-get-log-table' ),
+                    'log_query_args'  => $this->get_log_query_args(),
                 )
             );
 
@@ -199,6 +201,19 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
             schedule_cron_event();
 
             wp_send_json_success(['message' => 'Scheduler started successfully!']);
+        }
+
+        private function get_log_query_args(): array {
+            $keys = ['s', 'status_filter', 'profile_filter', 'orderby', 'order', 'paged'];
+            $args = [];
+
+            foreach ($keys as $key) {
+                if (isset($_GET[$key])) {
+                    $args[$key] = sanitize_text_field(wp_unslash($_GET[$key]));
+                }
+            }
+
+            return $args;
         }
 
         public function add_settings_link($links) {

@@ -150,6 +150,14 @@ input.ssmptms-date-picker {
     transition: width 0.4s ease-in-out;
 }
 
+.ssmptms-log-table-container {
+    transition: opacity 0.2s ease-in-out;
+}
+
+.ssmptms-log-table-container.ssmptms-log-table-refreshing {
+    opacity: 0.55;
+}
+
 .ssmptms-start-scheduler:not(.started)  {
     cursor: pointer;
 }
