@@ -171,7 +171,6 @@ function get_system_status_data(): array {
             $eta_timestamp = $next > $eta_timestamp ? $next : $eta_timestamp;
             $eta_human = date_i18n(get_option('time_format'), $eta_timestamp);
             $duration = format_duration(max(0, $eta_timestamp - time()));
-            $next_check = $next > time() ? format_duration($next - time()) : __('now', Constants::DOMAIN);
 
             return array(
                 'status' => 'running',
@@ -180,7 +179,6 @@ function get_system_status_data(): array {
                 'queued' => $queued_emails,
                 'eta' => $eta_human,
                 'duration' => $duration,
-                'next_check' => $next_check,
             );
         } else {
             return array(

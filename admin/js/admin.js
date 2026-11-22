@@ -41,7 +41,6 @@ jQuery(function ($) {
             html += '</div>';
             html += '<p class="description">'
                 + data.queued + ' ' + __('emails queued', textDomain) + ' • ETA ' + data.eta + ' (' + data.duration + ')'
-                + (data.next_check ? ' • ' + __('Next check', textDomain) + ' ' + data.next_check : '')
                 + '</p>';
         } else if (data.status === 'not_running') {
             html += ' <a class="ssmptms-start-scheduler">▶️ ' + __('Start', textDomain) + '</a>';
