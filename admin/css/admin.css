@@ -253,7 +253,8 @@ input.ssmptms-date-picker {
 
 .ssmptms-select {
     width: 100%;
-    max-width: 280px;
+    min-width: 220px;
+    max-width: 360px;
 }
 
 .ssmptms-field--checkbox {
@@ -309,6 +310,7 @@ input.ssmptms-date-picker {
     }
 
     .ssmptms-select {
+        min-width: 0;
         max-width: 100%;
     }
 }
