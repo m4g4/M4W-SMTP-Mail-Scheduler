@@ -48,6 +48,7 @@ final class Constants {
 
     // Admin pages
     public const SETTINGS_PAGE = 'ssmptms_settings';
+    public const MAILIZEE_SETTINGS_PAGE = 'ssmptms_mailizee';
     public const PROFILE_EDIT_PAGE = 'ssmptms_profile_edit';
 
     // Admin page sections

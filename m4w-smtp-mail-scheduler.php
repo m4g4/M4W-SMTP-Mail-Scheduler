@@ -35,6 +35,46 @@ require_once __DIR__ . '/install.php';
 require_once __DIR__ . '/includes/index.php';
 require_once __DIR__ . '/admin/index.php';
 
+if (!function_exists('ssmptms_get_email_stats_by_subject')) {
+    function ssmptms_get_email_stats_by_subject($subject) {
+        global $wpdb;
+
+        $counts = array(
+            'queued' => 0,
+            'failed' => 0,
+            'sent'   => 0,
+        );
+
+        $subject = is_scalar($subject) ? trim((string) $subject) : '';
+
+        if ('' === $subject) {
+            return $counts;
+        }
+
+        $table = $wpdb->prefix . Ssmptms\Constants::QUEUE_DB_NAME;
+        $rows  = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT status, COUNT(*) AS total FROM {$table} WHERE subject = %s AND testing = 0 GROUP BY status",
+                $subject
+            ),
+            ARRAY_A
+        );
+
+        foreach ((array) $rows as $row) {
+            $status = (string) $row['status'];
+            $total  = (int) $row['total'];
+
+            if ('sent' === $status || 'failed' === $status) {
+                $counts[$status] = $total;
+            } elseif ('queued' === $status || 'processing' === $status) {
+                $counts['queued'] += $total;
+            }
+        }
+
+        return $counts;
+    }
+}
+
 register_activation_hook(__FILE__, 'ssmptms_activation');
 register_deactivation_hook( __FILE__, 'ssmptms_deactivation' );
 

@@ -7,10 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function settings_page_url(): string {
-    $mailizee_active = function_exists('is_plugin_active') && is_plugin_active('m4w-mailizee/m4w-mailizee.php');
-    $file = $mailizee_active ? 'admin.php' : 'options-general.php';
-
-    return admin_url($file . '?page=' . Constants::SETTINGS_PAGE);
+    return admin_url('options-general.php?page=' . Constants::SETTINGS_PAGE);
 }
 
 /**

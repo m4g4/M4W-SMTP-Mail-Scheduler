@@ -12,6 +12,7 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
 
         public function __construct() {
             add_action('admin_menu', [$this, 'register_menus']);
+            add_action('m4w_mailizee_register_admin_pages_before_settings', [$this, 'register_mailizee_submenu'], 10, 2);
             add_action('admin_init', [$this, 'register_settings']);
             add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
             add_action('wp_ajax_ssmptms-start', [$this, 'ajax_start_scheduler']);
@@ -109,26 +110,13 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
         }
 
         public function register_menus() {
-            $mailizee_active = function_exists('is_plugin_active') && is_plugin_active('m4w-mailizee/m4w-mailizee.php');
-
-            if ($mailizee_active) {
-                add_submenu_page(
-                    null,
-                    __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
-                    __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
-                    'manage_options',
-                    Constants::SETTINGS_PAGE,
-                    [$this, 'settings_page']
-                );
-            } else {
-                add_options_page(
-                    __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
-                    __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
-                    'manage_options',
-                    Constants::SETTINGS_PAGE,
-                    [$this, 'settings_page']
-                );
-            }
+            add_options_page(
+                __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
+                __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
+                'manage_options',
+                Constants::SETTINGS_PAGE,
+                [$this, 'settings_page']
+            );
 
             add_submenu_page(
                 null,
@@ -137,6 +125,17 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
                 'manage_options',
                 Constants::PROFILE_EDIT_PAGE,
                 [$this, 'edit_profiles']
+            );
+        }
+
+        public function register_mailizee_submenu($parent_slug) {
+            add_submenu_page(
+                $parent_slug,
+                __('Scheduler', Constants::DOMAIN),
+                __('Scheduler', Constants::DOMAIN),
+                'manage_options',
+                Constants::MAILIZEE_SETTINGS_PAGE,
+                [$this, 'settings_page']
             );
         }
 
