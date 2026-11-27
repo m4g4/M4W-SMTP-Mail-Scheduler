@@ -56,7 +56,7 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
                 $profile_id = guidv4();
             }
 
-            echo '<div class="wrap"><h2>' . ($is_new ? __('Add SMTP Profile', Constants::DOMAIN) : __('Edit SMTP Profile', Constants::DOMAIN)) . '</h2>';
+            echo '<div class="wrap m4w_admin"><h2>' . ($is_new ? __('Add SMTP Profile', Constants::DOMAIN) : __('Edit SMTP Profile', Constants::DOMAIN)) . '</h2>';
 
             echo_message_styles();
             $this->show_errors();
@@ -68,7 +68,7 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
 
             echo '<div class="ssmptms-profile-grid">';
 
-            echo '<div class="ssmptms-profile-card">';
+            echo '<div class="ssmptms-profile-card m4w_card">';
             echo '<h3>' . esc_html__('Profile Details', Constants::DOMAIN) . '</h3>';
             echo '<p class="description">' . esc_html__('Set a friendly label and sender information for this profile.', Constants::DOMAIN) . '</p>';
 
@@ -112,7 +112,7 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
             echo '</div>';
             echo '</div>';
 
-            echo '<div class="ssmptms-profile-card">';
+            echo '<div class="ssmptms-profile-card m4w_card">';
             echo '<h3>' . esc_html__('SMTP Server', Constants::DOMAIN) . '</h3>';
             echo '<p class="description">' . esc_html__('Connection settings for your SMTP provider.', Constants::DOMAIN) . '</p>';
 
@@ -177,7 +177,7 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
             echo '<span class="ssmptms-button-text">' . esc_html($is_new ? __('Add Profile', Constants::DOMAIN) : __('Save Profile', Constants::DOMAIN)) . '</span>';
             echo '</button>';
             echo '<div class="ssmptms-profile-back-button-wrapper">';
-            echo '<a href="' . admin_url('options-general.php?page=' . Constants::SETTINGS_PAGE) . '">';
+            echo '<a href="' . settings_page_url() . '">';
             echo '<button type="button" class="button button-secondary">&larr; ' . __('Back', Constants::DOMAIN) . '</button>';
             echo '</a>';
             echo '</div>';
@@ -326,7 +326,7 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
             }
         
             // Redirect to success page
-            wp_safe_redirect(admin_url('options-general.php?page=' . Constants::SETTINGS_PAGE . '&saved=1'));
+            wp_safe_redirect(settings_page_url() . '&saved=1');
             exit;
         }
 
@@ -348,7 +348,7 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
         
             update_option($active_key, $profile_id);
         
-            wp_safe_redirect(admin_url('options-general.php?page=' . Constants::SETTINGS_PAGE . '&activated=1'));
+            wp_safe_redirect(settings_page_url() . '&activated=1');
             exit;
         }
 
@@ -374,7 +374,7 @@ if (!class_exists(__NAMESPACE__ . '\\Profile_Page', false)) {
                 update_option($profiles_key, $profiles);
             }
         
-            wp_safe_redirect(admin_url('options-general.php?page=' . Constants::SETTINGS_PAGE . '&deleted=1'));
+            wp_safe_redirect(settings_page_url() . '&deleted=1');
             exit;
         }
 

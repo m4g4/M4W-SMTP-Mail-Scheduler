@@ -78,7 +78,7 @@ if (!class_exists(__NAMESPACE__ . '\\Hour_Stats_Bar_Chart', false)) {
 
         public function display() {
             ?>
-            <div class="ssmptms-mail-chart ssmptms-bar-chart">
+            <div class="ssmptms-mail-chart ssmptms-bar-chart m4w_card">
                 <div class="ssmptms-mail-chart-header">
                     <h4><?php echo __('Emails Sent per Hour', Constants::DOMAIN)?></h4>
                     <input 

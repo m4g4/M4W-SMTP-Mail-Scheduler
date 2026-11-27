@@ -38,7 +38,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\Statistics', false ) ) {
                         ?>
                     </div>
                     <div class="ssmptms-mail-charts">
-                        <div class="ssmptms-mail-chart ssmptms-bar-chart">
+                        <div class="ssmptms-mail-chart ssmptms-bar-chart m4w_card">
                             <?php
                                 $chart = new Queue_Status_Bar_Chart();
                                 $chart->display();

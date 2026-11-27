@@ -6,6 +6,13 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
+function settings_page_url(): string {
+    $mailizee_active = function_exists('is_plugin_active') && is_plugin_active('m4w-mailizee/m4w-mailizee.php');
+    $file = $mailizee_active ? 'admin.php' : 'options-general.php';
+
+    return admin_url($file . '?page=' . Constants::SETTINGS_PAGE);
+}
+
 /**
  * Inline styles for test/send result messages.
  */
@@ -197,7 +204,7 @@ function get_system_status_data(): array {
 }
 
 function print_system_status(): void {
-    echo "<div class='ssmptms-status-bar not-initialized'></div>";
+    echo "<div class='ssmptms-status-bar m4w_card not-initialized'></div>";
 }
 
 add_action('wp_ajax_ssmptms-get-system-status', function() {

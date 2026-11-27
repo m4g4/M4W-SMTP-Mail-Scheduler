@@ -20,12 +20,21 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
         }
 
         public function enqueue_assets() {
+            $shared_ui = $this->shared_ui_style();
+
             wp_enqueue_style(
-		    	'ssmptms-admin-css',
-		    	plugins_url('css/admin.css', __FILE__),
-		    	array(),
-				Constants::PLUGIN_VERSION
-		    );
+                'm4w-design-system',
+                $shared_ui['url'],
+                array(),
+                $shared_ui['version']
+            );
+
+            wp_enqueue_style(
+                'ssmptms-admin-css',
+                plugins_url('css/admin.css', __FILE__),
+                array('m4w-design-system'),
+                Constants::PLUGIN_VERSION
+            );
 
             wp_enqueue_script(
                 'ssmptms-admin-js',
@@ -100,13 +109,26 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
         }
 
         public function register_menus() {
-            add_options_page(
-                __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
-                __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
-                'manage_options',
-                Constants::SETTINGS_PAGE,
-                [$this, 'settings_page']
-            );
+            $mailizee_active = function_exists('is_plugin_active') && is_plugin_active('m4w-mailizee/m4w-mailizee.php');
+
+            if ($mailizee_active) {
+                add_submenu_page(
+                    null,
+                    __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
+                    __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
+                    'manage_options',
+                    Constants::SETTINGS_PAGE,
+                    [$this, 'settings_page']
+                );
+            } else {
+                add_options_page(
+                    __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
+                    __('M4W SMTP Mail Scheduler', Constants::DOMAIN),
+                    'manage_options',
+                    Constants::SETTINGS_PAGE,
+                    [$this, 'settings_page']
+                );
+            }
 
             add_submenu_page(
                 null,
@@ -125,7 +147,7 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
             // Do not remove it.
             ?>
             <div class="wrap"><h1></h1></div>
-            <div class="ssmptms-headline-wrap">
+            <div class="ssmptms-headline-wrap m4w_admin">
                 <div class="ssmptms-headline-wrapper">
                     <div class="ssmptms-headline">
                         <h1><?php echo __('M4W SMTP Mail Scheduler', Constants::DOMAIN); ?></h1>
@@ -203,6 +225,23 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
             wp_send_json_success(['message' => 'Scheduler started successfully!']);
         }
 
+        private function shared_ui_style(): array {
+            $relative = 'm4w-mailizee/assets/src/ui/styles/m4w-design-system.css';
+            $path = WP_PLUGIN_DIR . '/' . $relative;
+
+            if (file_exists($path)) {
+                return [
+                    'url' => plugins_url($relative),
+                    'version' => filemtime($path),
+                ];
+            }
+
+            return [
+                'url' => plugins_url('css/m4w-design-system.css', __FILE__),
+                'version' => Constants::PLUGIN_VERSION,
+            ];
+        }
+
         private function get_log_query_args(): array {
             $keys = ['s', 'status_filter', 'profile_filter', 'orderby', 'order', 'paged'];
             $args = [];
@@ -217,7 +256,7 @@ if (!class_exists(__NAMESPACE__ . '\\Settings', false)) {
         }
 
         public function add_settings_link($links) {
-            $settings_link = '<a href="options-general.php?page='.Constants::SETTINGS_PAGE.'">' . __('Settings', Constants::DOMAIN) . '</a>';
+            $settings_link = '<a href="' . esc_url(settings_page_url()) . '">' . __('Settings', Constants::DOMAIN) . '</a>';
             array_unshift($links, $settings_link);
             return $links;
         }

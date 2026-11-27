@@ -208,7 +208,7 @@ class Log_Table extends \WP_List_Table {
     }
 
     private function get_action_url(array $args): string {
-        $base = admin_url('options-general.php?page=' . Constants::SETTINGS_PAGE . '&tab=log');
+        $base = settings_page_url() . '&tab=log';
         $keys = ['s', 'status_filter', 'profile_filter', 'orderby', 'order', 'paged'];
         $preserve = array_intersect_key($this->request_args, array_flip($keys));
 

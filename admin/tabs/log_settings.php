@@ -121,7 +121,7 @@ if (!class_exists(__NAMESPACE__ . '\\Log_Settings', false)) {
             $log_table = new Log_Table($request_args);
             $log_table->prepare_items();
 
-            $settings_url = admin_url('options-general.php');
+            $settings_url = settings_page_url();
             $original_request_uri = $_SERVER['REQUEST_URI'] ?? '';
             $request_uri_args = array_merge(
                 ['page' => Constants::SETTINGS_PAGE, 'tab' => 'log'],

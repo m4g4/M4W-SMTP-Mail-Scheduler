@@ -79,7 +79,7 @@ if (!class_exists(__NAMESPACE__ . '\\Donut_Chart', false)) {
 
         public function display() {
             ?>
-            <div class="ssmptms-mail-chart ssmptms-donut-chart">
+            <div class="ssmptms-mail-chart ssmptms-donut-chart m4w_card">
                 <div class="ssmptms-mail-chart-header">
                     <h4><?php echo __('Email Status Distribution', Constants::DOMAIN); ?></h4>
                     <input 
